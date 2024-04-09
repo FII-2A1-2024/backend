@@ -3,7 +3,6 @@
 const mysql = require("mysql");
 
 function establishConnection() {
-	// Create a connection to the MySQL server
 	const connection = mysql.createConnection({
 		host: "152.53.32.81",
 		user: "dev",
