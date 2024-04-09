@@ -1,5 +1,7 @@
-const express = require('express')
-const app = express()
-const db = require('./config/database')
+const express = require("express");
+const app = express();
+const postRoutes = require("./routes/postRoutes");
 
-module.exports = app
+app.use(postRoutes);
+
+module.exports = app;
