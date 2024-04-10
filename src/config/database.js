@@ -11,17 +11,16 @@ const database = process.env.DB_DATABASE;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 
-const db = mysql
-    .createConnection({
-        host: host,
-        port: port,
-        database: database,
-        user: user,
-        password: password,
-    })
-    .connect((err) => {
-        if (err) throw err;
-        console.log("Connected to " + database + " database");
-    });
+const db = mysql.createConnection({
+    host: host,
+    port: port,
+    database: database,
+    user: user,
+    password: password,
+});
+db.connect((err) => {
+    if (err) throw err;
+    console.log("Connected to " + database + " database");
+});
 
 module.exports = db;
