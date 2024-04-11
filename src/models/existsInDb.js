@@ -3,8 +3,7 @@ const bcrypt = require('bcrypt')
 
 const prisma = new PrismaClient();
 
-async function existsInDB(newUser) {
-    const {username} = newUser
+async function existsInDB(username) {
     try {
         const user = await prisma.user.findUnique({
             where: {
