@@ -54,6 +54,7 @@ router
     }
 })    
 .post("/", (req, res) => {
+    console.log("req: ", req.body)
     signUpController(req, res)
 })
 .get("/", (req, res) => {
