@@ -33,8 +33,8 @@ async function createUser(username, password){
             code = HttpCodes.SUCCES
             //verify email RIGHT HERE
             const verificationToken = generateVerificationToken(username)
-            const verificationLink = `http://localhost:8000/signup/verify?token=${verificationToken}`;
-            console.log(verificationToken)
+            const verificationLink = `http://localhost:${process.env.SERVER_PORT}/signup/verify?token=${verificationToken}`;
+            // console.log(verificationToken)
             sendEmail(username, verificationLink)
             return addInDb(newUser)
         }

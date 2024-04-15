@@ -15,7 +15,7 @@ router
 
 .get('/verify', async (req, res) => {
     const token = req.query.token;
-    console.log("S-a intrat in verify")
+    // console.log("S-a intrat in verify")
     try {
         const decoded = jwt.verify(token, signUpService.privateKey);
         const currTime = Date.now()
