@@ -3,12 +3,21 @@ const existsInDB = require('../models/existsInDb')
 const sendEmail = require('../utils/sendEmail.js')
 const jwt = require('jsonwebtoken')
 const HttpCodes = require('../config/returnCodes.js')
+const crypto = require('crypto');
+
+function generatePrivateKey() {
+    // Generate a 256-bit (32-byte) random private key
+    const privateKey = crypto.randomBytes(32).toString('hex');
+    return privateKey;
+}
+
+const privateKey = generatePrivateKey();
 
 function generateVerificationToken(email){
     return jwt.sign({
         email: email,
         timestamp: Date.now() 
-    }, process.env.JWT_SECRET, {expiresIn: '24h'})
+    }, privateKey, {expiresIn: '24h'})
 }
 
 async function createUser(username, password){
@@ -24,7 +33,8 @@ async function createUser(username, password){
             code = HttpCodes.SUCCES
             //verify email RIGHT HERE
             const verificationToken = generateVerificationToken(username)
-            const verificationLink = `http://localhost:3000/signup/verify?token=${verificationToken}`;
+            const verificationLink = `http://localhost:8000/signup/verify?token=${verificationToken}`;
+            console.log(verificationToken)
             sendEmail(username, verificationLink)
             return addInDb(newUser)
         }
@@ -39,5 +49,6 @@ async function createUser(username, password){
 }
 
 module.exports = {
-    createUser: createUser
+    createUser: createUser,
+    privateKey
 }

@@ -6,6 +6,7 @@ const existsInDB = require('../models/existsInDb')
 const userIsVerified = require('../models/isVerified')
 const markUserAsVerified = require('../models/markVerified')
 const HttpCodes = require('../config/returnCodes')
+const signUpService = require('../services/signUpService')
 
 router
 .get("/exists", (req, res) => {
@@ -14,8 +15,9 @@ router
 
 .get('/verify', async (req, res) => {
     const token = req.query.token;
-    try{
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("S-a intrat in verify")
+    try {
+        const decoded = jwt.verify(token, signUpService.privateKey);
         const currTime = Date.now()
         const tokenStamp = decoded.timestamp;
         const maxVerifyTime = 24 * 60 * 60 * 1000; //24 hr in milisecunde
