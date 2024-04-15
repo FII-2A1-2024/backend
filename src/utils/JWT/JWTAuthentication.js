@@ -1,8 +1,9 @@
-// authMiddleware.js
 const jwt = require('jsonwebtoken');
 const jwtSecretHandler = require('./JWTSecretGeneration');
 const jwtSecret = jwtSecretHandler.jwtSecret;
 
+//Se va utiliza in toate requesturile ce vor necesita actiuni de dupa logare.
+//pasarea acestei functii in routere va forta orice request la acel endpoint sa foloseasca un JWT.
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

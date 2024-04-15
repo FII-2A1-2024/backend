@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-
+//functie generica pentru generarea cheii private a unui token
 function generateSecret(length) {
     return crypto.randomBytes(Math.ceil(length / 2))
         .toString('hex')
