@@ -52,7 +52,7 @@ router
         res.send("Your account has been succesfully verified")
     } catch(error){
         console.error("Error verifying token: ", error);
-        res.status(HttpCodes.INVALID_REQUEST).send("Invalid or expired token")
+        res.status(HttpCodes.INVALID_REQUEST).send("<p>Invalid token</p><a href='#'>Resend</a>")
     }
 })    
 .post("/", (req, res) => {

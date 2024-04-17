@@ -26,7 +26,6 @@ async function createUser(username, password){
     return existsInDB(username).then(result => {
         if(result == 1){
             console.log("Exista deja in BD");
-            //aici ar trebui sa trimitem si un raspuns la server, nush cum
             code = HttpCodes.ALREADY_EXISTS
         }
         else{
