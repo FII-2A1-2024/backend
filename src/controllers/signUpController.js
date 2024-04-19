@@ -11,7 +11,7 @@ async function signUp(req, res){
             code = HttpCodes.INVALID_EMAIL
             console.log("Nu introducem userul in baza de date, are email gresit");
         } else{
-            const code = await userService.createUser(username, password)
+            code = await userService.createUser(username, password)
         }
         res.send({resCode: code})
     } catch (error){

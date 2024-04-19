@@ -26,7 +26,7 @@ async function createUser(username, password){
     return existsInDB(username).then(result => {
         if(result == 1){
             console.log("Exista deja in BD");
-            code = HttpCodes.ALREADY_EXISTS
+            code = HttpCodes.USER_ALREADY_EXISTS
         }
         else{
             code = HttpCodes.SUCCES
@@ -42,7 +42,7 @@ async function createUser(username, password){
         return code;
     }).catch(error => {
         console.error("Error:", error)
-        return HttpCodes.ALREADY_EXISTS;
+        return HttpCodes.USER_ALREADY_EXISTS;
     })
    
 }

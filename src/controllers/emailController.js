@@ -26,7 +26,7 @@ async function verifyEmail(req, res){
         //!exista userul??
         const userExistsResult = await existsInDB(email);
         if (!userExistsResult) {
-            res.status(HttpCodes.DOESNOT_EXIST).send('User does not exist');
+            res.status(HttpCodes.USER_DOESNOT_EXIST).send('User does not exist');
             console.log("Eroare de user does not exist");
             return
         }
