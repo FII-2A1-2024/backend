@@ -11,7 +11,6 @@ class PostService {
         const receivedPost = new post(
             result[0].id,
             result[0].author_id,
-            result[0].thread_id,
             result[0].title,
             result[0].description,
             result[0].votes,
@@ -28,7 +27,6 @@ class PostService {
             const receivedPost = new post(
                 result.id,
                 result.author_id,
-                result.thread_id,
                 result.title,
                 result.description,
                 result.votes,
@@ -40,7 +38,6 @@ class PostService {
     }
     static async post(
         author_id,
-        thread_id,
         title,
         description,
         votes
