@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const signUpController = require('../controllers/signUpController')
 const emailController = require('../controllers/emailController')
-const HttpCodes = require('../config/returnCodes')
 
 
 router

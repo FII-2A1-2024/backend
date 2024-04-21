@@ -15,4 +15,4 @@ async function deleteByEmail(email) {
 }
 
 // Call the function with the specified email
-deleteByEmail('razvanboita1609@gmail.com');
+deleteByEmail('razvan.boita@student.uaic.ro');

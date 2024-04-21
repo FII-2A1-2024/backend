@@ -5,6 +5,13 @@ const jwt = require('jsonwebtoken')
 const HttpCodes = require('../config/returnCodes.js')
 const crypto = require('crypto');
 
+const path = require("path");
+const dotenv = require("dotenv");
+const envPath = path.resolve(__dirname, "../config", ".env.local");
+dotenv.config({ path: envPath });
+
+
+
 function generatePrivateKey() {
     // Generate a 256-bit (32-byte) random private key
     const privateKey = crypto.randomBytes(32).toString('hex');
