@@ -43,18 +43,17 @@ class PostService {
         votes
     ) {
         const createdAt = new Date();
-        const values = [author_id, thread_id, title, description, votes, createdAt];
+        const values = [author_id, title, description, votes, createdAt];
         const results = await dbQuery(values, sql.sqlPost);
     }
     static async put(
         id,
         author_id,
-        thread_id,
         title,
         description,
         votes
     ) {
-        const values = [author_id, thread_id, title, description, votes, id];
+        const values = [author_id, title, description, votes, id];
         const results = await dbQuery(values, sql.sqlPut);
     }
     static async delete(id) {
