@@ -14,5 +14,6 @@ async function deleteByEmail(email) {
     }
 }
 
-// Call the function with the specified email
+// Folosim aceasta functie pt testare, daca nu stergem emailul din bd, 
+// nu putem testa ca iese din executie cu exceptia "exista deja in bd(453)" 
 deleteByEmail('razvan.boita@student.uaic.ro');

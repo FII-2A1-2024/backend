@@ -1,10 +1,16 @@
 const userService = require('../services/signUpService')
 const verifyEmailSyntax = require('../utils/verifyEmailSyntax')
 const HttpCodes = require('../config/returnCodes')
+const normalizeEmail = require('../utils/normalizeEmail')
 
 async function signUp(req, res){
     try{
-        const {username, password} = req.body;
+        const password = req.body.password;
+        let username = req.body.username;
+
+        //Vom normaliza emailul in cazul in care pune si litere mari
+        username = normalizeEmail(username)
+        // console.log("Normalized username: ", username);
         let code = HttpCodes.SUCCES
         if(!verifyEmailSyntax(username)){
             //emailul e invalid, nu are sintaxa buna

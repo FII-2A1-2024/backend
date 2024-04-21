@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
-const existsInDB = require('../models/existsInDb')
-const userIsVerified = require('../models/isVerified')
-const markUserAsVerified = require('../models/markVerified')
+const existsInDB = require('../utils/userExistsInDb')
+const userIsVerified = require('../utils/userIsVerified')
+const markUserAsVerified = require('../utils/markUserVerified')
 const HttpCodes = require('../config/returnCodes')
 const signUpService = require('../services/signUpService')
 

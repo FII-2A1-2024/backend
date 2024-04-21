@@ -1,5 +1,5 @@
-const addInDb = require('../models/addInDb')
-const existsInDB = require('../models/existsInDb')
+const addInDb = require('../utils/addUserInDb.js')
+const existsInDB = require('../utils/userExistsInDb.js')
 const sendEmail = require('../utils/sendEmail.js')
 const jwt = require('jsonwebtoken')
 const HttpCodes = require('../config/returnCodes.js')
