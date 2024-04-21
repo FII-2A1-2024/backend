@@ -6,11 +6,9 @@ const prisma = new PrismaClient();
 async function addUser(newUser) {
     const {username, password} = newUser
     try {
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
         // console.log(hashedPassword.length);
 
-        // Create a new user in the database
         const newUser = await prisma.user.create({
             data: {
                 emailPrimary: username,
