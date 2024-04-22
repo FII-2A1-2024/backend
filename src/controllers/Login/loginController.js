@@ -17,8 +17,14 @@ async function login(req, res) {
 			//                  actualizam codul
 			code = await checkExistence(email, password);
 		}
-		const token = tokenGeneration.generateAccessToken(email);
-		res.send({ resCode: code, token: token });
+		if(code === HttpsCodes.SUCCESS){
+			const token = tokenGeneration.generateAccessToken(email);
+			res.send({ resCode: code, token: token });
+		} else {
+			res.send({ resCode: code});
+		}
+			
+		
 	} catch (error) {
 		res.status(HttpCodes.INTERNAL_SERVER_ERROR).send({ error: error.message });
 	}
