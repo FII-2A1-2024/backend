@@ -2,6 +2,8 @@ const checkExistence = require("../../services/loginService");
 const verifyEmailSyntax = require("../../utils/verifyEmailSyntax");
 const HttpCodes = require("../../config/returnCodes");
 
+const tokenGeneration = require("../../utils/JWT/JWTGeneration");
+
 async function login(req, res) {
 	try {
 		const { email, password } = req.body;
@@ -15,7 +17,8 @@ async function login(req, res) {
 			//                  actualizam codul
 			code = await checkExistence(email, password);
 		}
-		res.send({ resCode: code });
+		const token = tokenGeneration.generateAccessToken(email);
+		res.send({ resCode: code, token: token });
 	} catch (error) {
 		res.status(HttpCodes.INTERNAL_SERVER_ERROR).send({ error: error.message });
 	}
