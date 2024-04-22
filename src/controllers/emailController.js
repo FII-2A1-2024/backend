@@ -4,13 +4,14 @@ const userIsVerified = require('../utils/userIsVerified')
 const markUserAsVerified = require('../utils/markUserVerified')
 const HttpCodes = require('../config/returnCodes')
 const signUpService = require('../services/signUpService')
+const privateKeyHandler = require('../utils/JWT/JWTSecretGeneration')
 
 
 async function verifyEmail(req, res){
     const token = req.query.token;
     
     try {
-        const decoded = jwt.verify(token, signUpService.privateKey);
+        const decoded = jwt.verify(token,privateKeyHandler.jwtSecret);
         const currTime = Date.now()
         const tokenStamp = decoded.timestamp;
         const maxVerifyTime = 24 * 60 * 60 * 1000; //24 hr in milisecunde
