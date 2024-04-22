@@ -1,4 +1,7 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const app = express();
+const resetPassword = require("./routes/resetPassword");
 
-module.exports = app
+app.use(express.json()).use("/resetPass", resetPassword);
+
+module.exports = app;
