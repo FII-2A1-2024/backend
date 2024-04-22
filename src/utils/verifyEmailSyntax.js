@@ -1,8 +1,11 @@
-function verifyEmailSyntax(email) {
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-	return emailRegex.test(email);
-	// Emailul trebuie sa fie de forma: {orice}@{orice}.{orice}
-	// unde "orice" != (@ si whitespace)
+function verifyEmailSyntax(email){
+    const emailRegex = /^[a-zA-Z]+(?:\.[a-zA-Z]+)@student\.uaic\.ro$/;
+    return emailRegex.test(email) 
+    //trebuie sa fie de forma: {orice}@{orice}.{orice} , unde "orice" != (@ si whitespace) 
 }
 
-module.exports = verifyEmailSyntax;
+
+
+
+module.exports = verifyEmailSyntax
+

@@ -12,3 +12,4 @@ module.exports = {
 	UNVERIFIED_EMAIL: 459,
 	INTERNAL_SERVER_ERROR: 500,
 };
+
