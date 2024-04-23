@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 // Verifica daca un email exista in baza de date, caz in care
 // verifica daca se potriveste cu parola. Codul generat este
 // returnat
-async function existsInDB(email, password) {
+async function existsInDBEmailAndPass(email, password) {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
@@ -27,4 +27,4 @@ async function existsInDB(email, password) {
 	}
 }
 
-module.exports = existsInDB;
+module.exports = existsInDBEmailAndPass;
