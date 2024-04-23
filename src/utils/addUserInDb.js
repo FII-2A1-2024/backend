@@ -2,11 +2,18 @@ const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
+const crypto = require('crypto');
 
+function generateHash(key) {
+    const hash = crypto.createHash('sha256');
+    hash.update(key);
+    return hash.digest('hex');
+}
 async function addUser(newUser) {
     const {username, password} = newUser
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await generateHash(password);
+        console.log(hashedPassword);
         // console.log(hashedPassword.length);
 
         const newUser = await prisma.user.create({
@@ -29,4 +36,7 @@ async function addUser(newUser) {
 
 // Example usage:
 // addUser("newUser", "newPassword");
-module.exports = addUser
+module.exports = {
+    addUser,
+    generateHash
+};

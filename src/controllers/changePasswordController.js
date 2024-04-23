@@ -5,6 +5,8 @@ const HttpCodes = require("../config/returnCodes");
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 
+const passwordHashHandler = require("../utils/addUserInDb")
+
 const prisma = new PrismaClient();
 
 async function changePassword(req, res) {
@@ -22,7 +24,7 @@ async function changePassword(req, res) {
 		}
 
 		const email = decoded.email;
-		const hashedPassword = await bcrypt.hash(req.body.password, 10);
+		const hashedPassword = await passwordHashHandler.generateHash(req.body.password, 10);
 		await prisma.user.update({
 			where: { emailPrimary: email },
 			data: { password: hashedPassword },
