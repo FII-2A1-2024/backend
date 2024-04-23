@@ -23,16 +23,22 @@ def check_commit_message_format(commit_message):
 ''')
         sys.exit(1)
 
-# Extract commit message from GIT_EDITOR environment variable
-commit_message = sys.argv[1]
 
-# don't approve empty commit message
-if not commit_message:
-    print("Error: Commit message is empty.")
-    sys.exit(1)
+def main():
+    # Extract commit message 
+    with open(".git/COMMIT_EDITMSG", 'r') as f:
+        commit_message = f.read().strip()
 
-# Check format of the commit message
-check_commit_message_format(commit_message)
+    # don't approve empty commit message
+    if not commit_message:
+        print("Error: Commit message is empty.")
+        sys.exit(1)
 
-# If the commit message format is correct, exit with success
-sys.exit(0)
+    # Check format of the commit message
+    check_commit_message_format(commit_message)
+
+    # If the commit message format is correct, exit with success
+    sys.exit(0)
+
+if __name__ == "__main__":
+    main()
