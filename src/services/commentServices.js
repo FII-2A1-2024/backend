@@ -22,9 +22,30 @@ class commentServices {
             );
             receivedCommentsForAPost.push(receivedCommentForAPost);
         });
-                    
-        return receivedCommentsForAPost;
+            
+        const nestedJSONArray = receivedCommentsForAPost
+        .filter(comment => comment.parent_id === -1)
+        .map(comment => this.buildNestedJSON(receivedCommentsForAPost, comment));
+
+        
+        return nestedJSONArray;
     }
+    static extractSubcomments(commentsArray, parentId) {
+        return commentsArray.filter(comment => comment.parent_id === parentId);
+    }
+
+    static buildNestedJSON(commentsArray, comment) {
+        const subcomments = this.extractSubcomments(commentsArray, comment.id);
+
+        if (subcomments.length === 0) {
+            return { detaliiComentariu: comment };
+        }
+
+        const nestedSubcomments = subcomments.map(subcomment => this.buildNestedJSON(commentsArray, subcomment));
+
+        return { detaliiComentariu: comment, subcomentarii: nestedSubcomments };
+    }
+    
     static async post(
         post_id,
         parent_id,
@@ -41,7 +62,14 @@ class commentServices {
             createdAt];
         const results = await dbQuery(values, sql.sqlPost);
     }
-    static async delete(id, post_id, parent_id) {
+    static async put(
+        id,
+        description
+    ) {
+        const values = [description, id];
+        const results = await dbQuery(values, sql.sqlPut);
+    }
+    static async delete(id, post_id) {
 
         const queue = [id];
         while (queue.length > 0){
