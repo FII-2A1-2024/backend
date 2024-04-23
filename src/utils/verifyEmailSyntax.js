@@ -1,5 +1,3 @@
-
-
 function verifyEmailSyntax(email){
     const emailRegex = /^[a-zA-Z]+(?:\.[a-zA-Z]+)@student\.uaic\.ro$/;
     return emailRegex.test(email) 
@@ -10,3 +8,4 @@ function verifyEmailSyntax(email){
 
 
 module.exports = verifyEmailSyntax
+
