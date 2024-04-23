@@ -26,7 +26,7 @@ async function createUser(username, password){
             const verificationLink = `http://localhost:${process.env.SERVER_PORT}/signup/verify?token=${verificationToken}`;
             // console.log(verificationToken)
             sendEmail(username, verificationLink)
-            return addInDb(newUser)
+            return addInDb.addUser(newUser)
         }
         return Promise.resolve(code)
     }).then(() => {

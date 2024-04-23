@@ -17,9 +17,8 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "prisma": "^5.12.1"
+    "path": "^0.12.7",
+    "prisma": "^5.12.1",
+    "sendgrid": "^5.2.3"
   }
 }

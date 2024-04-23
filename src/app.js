@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const resetPassword = require("./routes/resetPassword");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const signUpRouter = require('./routes/signUp')
@@ -15,6 +16,7 @@ app
     .use("/signup", signUpRouter)
     .use(postRoutes)
     .use("/login", loginRouter)
+    .use("/resetPass", resetPassword)
     .use(commentRoutes);
     
 
