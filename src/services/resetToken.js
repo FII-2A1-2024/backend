@@ -1,3 +1,5 @@
+//Acest fisier nu trebuie sa existe.Functia generateResetToken trebuie adaugata in utils/jwt/JWTGeneration
+
 const crypto = require("node:crypto");
 const jwt = require("jsonwebtoken");
 
