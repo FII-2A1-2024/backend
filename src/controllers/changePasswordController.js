@@ -22,7 +22,6 @@ async function changePassword(req, res) {
 		}
 
 		const email = decoded.email;
-		console.log(req.body.password);
 		const hashedPassword = await bcrypt.hash(req.body.password, 10);
 		await prisma.user.update({
 			where: { emailPrimary: email },

@@ -3,7 +3,7 @@
 // with a reset link
 
 const findEmail = require("../utils/findEmail");
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/sendCustomEmail");
 const resetTokenServices = require("../services/resetToken");
 const HttpCodes = require("../config/returnCodes");
 
