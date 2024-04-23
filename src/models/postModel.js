@@ -2,7 +2,6 @@ class Post {
     constructor(
         id,
         author_id,
-        thread_id,
         title,
         description,
         votes,
@@ -10,7 +9,6 @@ class Post {
     ) {
         this.id = id;
         this.author_id = author_id;
-        this.thread_id = thread_id;
         this.title = title;
         this.description = description;
         this.votes = votes;
