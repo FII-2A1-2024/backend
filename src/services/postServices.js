@@ -1,6 +1,7 @@
 const post = require("./../models/postModel");
 const dbQuery = require("./../utils/dbQuery");
 const sql = require("./../utils/postSql");
+const commentServices = require("./commentServices");
 
 class PostService {
     static async get(id) {
@@ -112,7 +113,7 @@ class PostService {
                 throw new Error("Post couldn't be deleted");
         }
         else throw new Error("Post with the given id doesn't exist");
-
+        commentServices.deleteByPost(id);
     }
 }
 

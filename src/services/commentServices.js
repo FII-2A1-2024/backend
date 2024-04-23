@@ -83,6 +83,14 @@ class commentServices {
             });
         }
     }
+    static async deleteByPost(post_id) {
+        const values = [post_id];
+        const results = await dbQuery(values, sql.sqlGetAll);
+
+        results.forEach((result) => {
+            this.delete(result.id);
+        });
+    }
     static async put(
         id,
         description
