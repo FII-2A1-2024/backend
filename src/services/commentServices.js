@@ -84,6 +84,13 @@ class commentServices {
             });
         }
     }
+    static async put(
+        id,
+        description
+    ) {
+        const values = [description, id];
+        const results = await dbQuery(values, sql.sqlPut);
+    }
 }
 
 

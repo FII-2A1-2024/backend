@@ -51,6 +51,18 @@ class CommentController {
             res.status(500).send("Error occured: " + error);
         }
     }
+    static async put(req, res) {
+        const { id, description} = req.query;
+        try {
+            await commentServices.put(
+                id,
+                description
+            );
+            res.status(200).send("Comment updated in db");
+        } catch (error) {
+            res.status(500).send("Error occured: " + error);
+        }
+    }
 }
 
 module.exports = CommentController;
