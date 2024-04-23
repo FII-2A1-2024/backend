@@ -3,9 +3,9 @@ const dbQuery = require("./../utils/dbQuery");
 const sql = require("./../utils/commentSql");
 
 class commentServices {
-    static async get(id) {
-        const values = [id];
-        const results = await dbQuery(values, sql.sqlGet);
+    static async getAll(post_id) {
+        const values = [post_id];
+        const results = await dbQuery(values, sql.sqlGetAll);
         const receivedCommentsForAPost = [];
 
         results.forEach((result) => {
@@ -27,13 +27,11 @@ class commentServices {
         .filter(comment => comment.parent_id === -1)
         .map(comment => this.buildNestedJSON(receivedCommentsForAPost, comment));
 
-        
         return nestedJSONArray;
     }
     static extractSubcomments(commentsArray, parentId) {
         return commentsArray.filter(comment => comment.parent_id === parentId);
     }
-
     static buildNestedJSON(commentsArray, comment) {
         const subcomments = this.extractSubcomments(commentsArray, comment.id);
 
@@ -69,13 +67,14 @@ class commentServices {
         const values = [description, id];
         const results = await dbQuery(values, sql.sqlPut);
     }
-    static async delete(id, post_id) {
+    static async delete(id) {
 
         const queue = [id];
         while (queue.length > 0){
             const firstItem = queue.shift();
+
             const deleteResult = await dbQuery(firstItem, sql.sqlDelete);
-            const values = [post_id, firstItem];
+            const values = [firstItem];
 
             const results = await dbQuery(values, sql.sqlGetIDsToDelete);
 
