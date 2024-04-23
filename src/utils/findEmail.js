@@ -5,14 +5,7 @@ async function findEmail(email) {
 	try {
 		const emailFound = await prisma.user.findFirst({
 			where: {
-				OR: [
-					{
-						emailPrimary: email,
-					},
-					{
-						emailSecondary: email,
-					},
-				],
+				emailPrimary: email,
 			},
 		});
 		return emailFound != null;

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const resetPasswordController = require("../controllers/resetPasswordController");
+const changePasswordController = require("../controllers/changePasswordController");
 
 router
 	.get("/", (req, res) => {
@@ -8,6 +9,12 @@ router
 	})
 	.post("/", (req, res) => {
 		resetPasswordController(req, res);
+	})
+	.get("/verify", (req, res) => {
+		res.send({ data: "insert new password" });
+	})
+	.post("/verify", (req, res) => {
+		changePasswordController(req, res);
 	});
 
 module.exports = router;
