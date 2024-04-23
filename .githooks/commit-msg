@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import os
+import re
+import sys
+
+def check_commit_message_format(commit_message):
+    # regex expression with respect for ticket id format
+    pattern = r'^\[BE[1-2]-[0-9]{3}\].*'
+
+    # check if the commit message matches the pattern
+    if not re.match(pattern, commit_message):
+        print("Error: Commit message format is incorrect. Your message: ", commit_message)
+        print("Commit message should start with '[BE1-yyy]' or '[BE2-yyy]' where yyy is a 3-digit number.")
+        print("Example: '[BE1-123] Your commit message here.'")
+        print(r'''
+ _    _      _ _
+| |  | |    | | |
+| |__| | ___| | | ___
+|  __  |/ _ \ | |/ _ \
+| |  | |  __/ | | (_) |
+|_|  |_|\___|_|_|\___/ , not a nice message:)))
+''')
+        sys.exit(1)
+
+# Extract commit message from GIT_EDITOR environment variable
+commit_message = sys.argv[1]
+
+# don't approve empty commit message
+if not commit_message:
+    print("Error: Commit message is empty.")
+    sys.exit(1)
+
+# Check format of the commit message
+check_commit_message_format(commit_message)
+
+# If the commit message format is correct, exit with success
+sys.exit(0)
