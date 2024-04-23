@@ -6,6 +6,7 @@ const signUpRouter = require('./routes/signUp')
 const jwtSecretHandler = require('./utils/JWT/JWTSecretGeneration')
 const authenticateToken = require('./utils/JWT/JWTAuthentication')
 const generateAccessToken = require('./utils/JWT/JWTGeneration')
+const loginRouter = require("./routes/login");
 const jwt = require('jsonwebtoken')
 
 
