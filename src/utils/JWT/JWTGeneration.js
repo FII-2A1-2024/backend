@@ -5,13 +5,6 @@ const jwtSecretHandler = require('./JWTSecretGeneration')
 //de completat cu roluri:
 //poate fi admin sau client obisnuit.
 function generateAccessToken(user) {
-  const roles = ['admin', 'simpleUser'];
-  
-  // eroare 
-  if (!roles.includes(user.role)) {
-    const error = new Error('Unauthorized access');
-    return error;
-  }
   return jwt.sign({ user,timestamp: Date.now() }, jwtSecretHandler.jwtSecret);
 }
 
