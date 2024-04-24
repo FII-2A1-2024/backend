@@ -1,7 +1,7 @@
-const userServices = require("./../services/userServices");
+const adminServices = require("../../services/adminServices");
 
 
-class UserController {
+class AdminController {
     static async timeoutUser(req, res) {
         try {
             res.status(200).send("success");
@@ -39,4 +39,4 @@ class UserController {
     }
 }
 
-module.exports = UserController;
+module.exports = AdminController;
