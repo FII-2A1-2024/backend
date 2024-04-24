@@ -8,7 +8,7 @@ router.patch("/admin/timeoutUser", authenticateToken, isAdmin, adminController.t
 
 router. patch("/admin/promoteUser",authenticateToken,isAdmin,adminController.promoteUser);
 
-router. get("/reviewReport",authenticateToken,isAdmin,adminController.reviewReport);
+router. get("/admin/reviewReport",authenticateToken,isAdmin,adminController.reviewReport);
 
 router. post("/admin/sendWarning",authenticateToken,isAdmin,adminController.sendWarning);
 router. delete("/admin/deleteAPost",authenticateToken,isAdmin,adminController.deletePost);

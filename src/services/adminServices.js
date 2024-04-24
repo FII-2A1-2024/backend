@@ -1,6 +1,4 @@
-const post = require("./../models/postModel");
-const dbQuery = require("./../utils/dbQuery");
-const sqlForUser = require("./../utils/userTableSql"); //interogari db
+
 const express = require("express");
 const router = express.Router();
 

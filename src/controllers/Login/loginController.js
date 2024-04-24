@@ -17,7 +17,7 @@ async function login(req, res) {
 			//                  actualizam codul
 			code = await checkExistence(email, password);
 		}
-		if(code === HttpCodes.SUCCESS){
+		if(code === HttpCodes.SUCCES){
 			const token = tokenGeneration.generateAccessToken(email);
 			res.send({ resCode: code, token: token });
 		} else {
