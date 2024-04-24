@@ -16,7 +16,7 @@ app
     .use("/signup", signUpRouter)
     .use(postRoutes)
     .use("/login", loginRouter)
-    .use(commentRoutes);
+    .use(commentRoutes)
     .use(adminRoutes)
 
 module.exports = app;

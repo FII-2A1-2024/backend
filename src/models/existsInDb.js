@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const HttpCodes = require("../config/returnCodes.js");
-
+const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 // Verifica daca un email exista in baza de date, caz in care
@@ -13,10 +13,12 @@ async function existsInDBEmailAndPass(email, password) {
 				emailPrimary: email,
 			},
 		});
+		const arePasswordsTheSame = await bcrypt.compare(password, user.password);
+		
 		if (user == null) {
 			return HttpCodes.USER_DOESNOT_EXIST;
 		}
-		if (user.password !== password) {
+		if (!arePasswordsTheSame) {
 			return HttpCodes.WRONG_PASSWORD;
 		}
 		return HttpCodes.SUCCES;

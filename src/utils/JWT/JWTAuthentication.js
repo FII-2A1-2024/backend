@@ -9,8 +9,9 @@ function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'Unauthorized: Access token is missing' });
-
+console.log(token);
     jwt.verify(token, jwtSecret, (err, user) => {
+        
         if (err) {
             if (err.name === 'JsonWebTokenError') {
                 return res.status(403).json({ error: 'Forbidden: Invalid access token' });
