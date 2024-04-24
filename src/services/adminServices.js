@@ -9,17 +9,14 @@ class AdminService {
     static async promoteUser(id) {
         return 0;
     }
-    static async reviewReport( ) {
+    static async reviewReport() {
         return 0;
-     }
-    static async sendWarning(id ) {
-    return 0;  }
+    }
+    static async sendWarning(id) {
+        return 0;
+    }
     static async deletePost(id) {
-        /*
-        const values = [id];
-        const results = await dbQuery(values, sql.sqlDelete);
-        */
-       return 0;
+        return 0;
     }
 }
 
