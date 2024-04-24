@@ -14,11 +14,12 @@ console.log(token);
         
         if (err) {
             if (err.name === 'JsonWebTokenError') {
+                console.log(err);
                 return res.status(403).json({ error: 'Forbidden: Invalid access token' });
             }
             return next(err); // Pass other errors to the global error handler
         }
-        req.user = user;
+        user=req.user;
         if (!user.role) {
             return res.status(403).json({ error: 'Forbidden: User role is missing in the token' });
         }
