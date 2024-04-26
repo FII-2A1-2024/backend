@@ -20,7 +20,7 @@ async function createUser(username, password){
             code = HttpCodes.USER_ALREADY_EXISTS
         }
         else{
-            code = HttpCodes.SUCCES
+            code = HttpCodes.SUCCESS
             //verify email RIGHT HERE
             const verificationToken = jwtHandler.generateVerificationToken(username)
             const verificationLink = `http://localhost:${process.env.SERVER_PORT}/signup/verify?token=${verificationToken}`;

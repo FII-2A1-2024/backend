@@ -31,7 +31,7 @@ async function changePassword(req, res) {
 		});
 
 		res
-			.status(HttpCodes.SUCCES)
+			.status(HttpCodes.SUCCESS)
 			.send("Your password has been succesfully changed");
 	} catch (error) {
 		console.error("Error verifying token: ", error);
