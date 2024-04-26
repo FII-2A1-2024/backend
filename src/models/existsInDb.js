@@ -29,4 +29,4 @@ async function existsInDBEmailAndPass(email, password) {
 
 
 
-module.exports = existsInDB
+module.exports = existsInDBEmailAndPass
