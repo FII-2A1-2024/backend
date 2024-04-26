@@ -19,7 +19,7 @@ async function login(req, res) {
 		const hashedPassword = await passwordHashHandler.generateHash(password) ;
 		code = await checkExistence(email, hashedPassword);
 		}
-		if(code === HttpCodes.SUCCESS){
+		if(code === HttpCodes.SUCCES){
 			const token = tokenGeneration.generateAccessToken(email);
 			res.send({ resCode: code, token: token });
 		} else {

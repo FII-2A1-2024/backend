@@ -6,7 +6,7 @@ const passwordHashHandler = require("../utils/addUserInDb.js")
 async function checkExistence(email, password) {
 	let code = HttpCodes.SUCCES;
 	const hashedPassword = passwordHashHandler.generateHash(password);
-	const userExistsInDB = await existsInDB(email, password);
+	const userExistsInDB = await existsInDB(email, hashedPassword);
 	if (userExistsInDB === HttpCodes.SUCCES) {
 		const userVerified = await isVerified(email);
 		if (userVerified) {
