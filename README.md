@@ -14,5 +14,3 @@
   - ```./src/services``` : contains service files that encapsulate business logic and interact with models to perform operations on the data. Services abstract away the complexity of data manipulation from the controllers and provide a clean separation of concerns.
   - ```./src/models``` : contains model files that define the structure of data entities used in the application. Models represent the data stored in the database and often provide methods for interacting with the database.
   - ```./src/utils``` : contains utility files that contain reusable functions or helper methods used throughout the application. Utilities can include functions for validation, formatting, error handling, etc.
-
-demo
