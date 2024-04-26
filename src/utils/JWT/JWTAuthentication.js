@@ -20,7 +20,7 @@ console.log(token);
             }
             return next(err); // Pass other errors to the global error handler
         }
-        user=req.user;
+        req.user=user;
         
         next();
     });

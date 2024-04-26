@@ -10,8 +10,8 @@ const generateAccessToken = require('./utils/JWT/JWTGeneration')
 const loginRouter = require("./routes/login");
 const jwt = require('jsonwebtoken')
 const adminRoutes = require("./routes/Admin&UserRoutes/adminRoutes");
-const userRoutes = require("./routes/Admin&UserRoutes/adminRoutes");
-
+const userRoutes = require("./routes/Admin&UserRoutes/userRoutes");
+const isUser = require("./utils/Middleware/isUser");
 
 app
     .use(express.json())
