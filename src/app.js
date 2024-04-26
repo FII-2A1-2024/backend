@@ -19,7 +19,7 @@ app
     .use("/login", loginRouter)
     .use("/resetPass", resetPassword)
     .use(authenticateToken,isUser,postRoutes)
-    .use(authenticateToken,isUser,commentRoutes)
+    .use(authenticateToken,isUser,commentRoutes)  //avem nevoie de token pt a accesa postari
     .use(adminRoutes)
     .use(userRoutes)
 module.exports = app;
