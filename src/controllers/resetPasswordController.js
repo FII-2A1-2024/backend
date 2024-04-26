@@ -15,7 +15,7 @@ async function resetPassword(req, res) {
 		const resetToken = resetTokenServices.generateResetToken(email);
 		const resetLink = `http://${process.env.SERVER_IP}:${process.env.SERVER_PORT}/resetPass/verify?token=${resetToken}`;
 		sendEmail(email, "Password Reset", resetLink);
-		res.send(HttpCodes.SUCCES);
+		res.send(HttpCodes.SUCCESS);
 	} else {
 		console.log("nu am gasit email");
 		res.send(HttpCodes.USER_DOESNOT_EXIST);

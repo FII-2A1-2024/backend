@@ -19,7 +19,7 @@ async function existsInDBEmailAndPass(email, password) {
 		if (user.password !== password) {
 			return HttpCodes.WRONG_PASSWORD;
 		}
-		return HttpCodes.SUCCES;
+		return HttpCodes.SUCCESS;
 	} catch (error) {
 		console.error("Error retrieving user:", error);
 	} finally {
