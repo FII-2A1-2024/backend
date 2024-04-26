@@ -1,0 +1,30 @@
+Pentru ca trimiterea email-ului sa functioneze, trebuie sa adaugati urmatoarele variabile in 
+fisierul .env.local:
+
+SENDGRID_API_KEY="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"
+FROM_EMAIL="razvanboita1609@gmail.com"
+TEMPLATE_ID="d-469164d97ad443ed8291a55c5d2cf444"
+
+//testv2
+
+De asemenea, pentru ca Prisma sa functioneze, trebuie sa aveti in acel fisier url-ul complet de la baza de date,
+cu numele DATABASE_URL.
+Puteti folosi formatul de mai jos:
+
+DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}
+
+[BE2-013] JWT Implementation
+Momentan JWT a fost integrat in functionalitatea de signUp.
+JWT este compus din payload(informatie despre user in general) si cheie privata(JWT Secret).
+Momentan,se genereaza o cheie privata la fiecare pornire a serverului.Deci daca serverul se inchide,tokenul
+va fi invalidat(asta doar pentru functionalitatea de signUp).
+Toate functiile helpers pentru a folosi JWT se regasesc in utils/JWT.
+
+JWTAuthentication:Acest fisier contine logica pentru verificarea unui token.Va restrictiona orice endpoint
+unde este folosit in caz ca tokenul lipseste sau nu are permisiunea corespunzatoare.
+
+JWTGeneration:Acest fisier contine logica de generat tokene.Momentan se genereaza tokene pentru doua cazuri.Pentru login si pentru verificarea email-ului
+cand userul creaza un cont.
+
+JWTSecretGeneration:Acest fisier contine logica de generat o cheie privata(JWT Secret).Va fi folosit de un user la fiecare pornire a serverului.
+
