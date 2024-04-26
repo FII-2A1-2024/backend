@@ -10,18 +10,16 @@ async function isUser(req, res, next) {
 
     try {
         const userEmail = user['user'];
-
-        // daca exista emailul in admins atunci next()
         const admin = await prisma.admin.findUnique({
             where: {
                 email: userEmail,
             },
         });
 
-        if (!admin) {
-            next();
-        } else {
+        if (admin) {
             return res.status(401).json({ error: 'Unauthorized' });
+        } else {
+            next();
         }
     } catch (error) {
         console.error('Error:', error);

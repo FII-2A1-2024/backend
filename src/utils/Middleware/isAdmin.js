@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function isAdmin(req, res, next) {
     const user = req.user;
-    // console.log(user); 
+     console.log(user); 
     if (!user || !user['user']) {
         return res.status(401).json({ error: 'Unauthorized' });
     }

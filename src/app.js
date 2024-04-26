@@ -16,10 +16,10 @@ const isUser = require("./utils/Middleware/isUser");
 app
     .use(express.json())
     .use("/signup", signUpRouter)
-    .use(postRoutes)
     .use("/login", loginRouter)
     .use("/resetPass", resetPassword)
-    .use(commentRoutes)
+    .use(authenticateToken,isUser,postRoutes)
+    .use(authenticateToken,isUser,commentRoutes)
     .use(adminRoutes)
     .use(userRoutes)
 module.exports = app;
