@@ -5,7 +5,7 @@ SENDGRID_API_KEY="SG.zaD8Ho_pSPidZkjThz1G8g.Zyoay5yZ9VJeVeswy4QXVw4R7KqjYvsNxPKd
 FROM_EMAIL="razvanboita1609@gmail.com"
 TEMPLATE_ID="d-469164d97ad443ed8291a55c5d2cf444"
 
-
+//test
 
 De asemenea, pentru ca Prisma sa functioneze, trebuie sa aveti in acel fisier url-ul complet de la baza de date,
 cu numele DATABASE_URL.
