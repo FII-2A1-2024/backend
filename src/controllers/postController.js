@@ -19,13 +19,14 @@ class PostController {
         }
     }
     static async post(req, res) {
-        const { author_id, title, description, votes } = req.body;
+        const { author_id, title, description, votes, category } = req.body;
         try {
             await postServices.post(
                 author_id,
                 title,
                 description,
-                votes
+                votes,
+                category
             );
             res.status(200).json({ "status":"ok", "message":"post created successfully" });
         } catch (error) {
@@ -33,14 +34,15 @@ class PostController {
         }
     }
     static async put(req, res) {
-        const { id, author_id, title, description, votes } = req.body;
+        const { id, author_id, title, description, votes, category } = req.body;
         try {
             await postServices.put(
                 id,
                 author_id,
                 title,
                 description,
-                votes
+                votes,
+                category
             );
             res.status(200).json({ "status":"ok", "message":"post updated successfully" });
         } catch (error) {
