@@ -11,7 +11,7 @@ async function signUp(req, res){
         //Vom normaliza emailul in cazul in care pune si litere mari
         username = normalizeEmail(username)
         // console.log("Normalized username: ", username);
-        let code = HttpCodes.SUCCES
+        let code = HttpCodes.SUCCESS
         if(!verifyEmailSyntax(username)){
             //emailul e invalid, nu are sintaxa buna
             code = HttpCodes.INVALID_EMAIL
