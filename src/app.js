@@ -3,6 +3,7 @@ const app = express();
 const resetPassword = require("./routes/resetPassword");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const postFollowRoutes = require("./routes/postFollowRoutes");
 const signUpRouter = require('./routes/signUp')
 const jwtSecretHandler = require('./utils/JWT/JWTSecretGeneration')
 const authenticateToken = require('./utils/JWT/JWTAuthentication')
@@ -17,7 +18,8 @@ app
     .use(postRoutes)
     .use("/login", loginRouter)
     .use("/resetPass", resetPassword)
-    .use(commentRoutes);
+    .use(commentRoutes)
+    .use(postFollowRoutes);
     
 
 module.exports = app;
