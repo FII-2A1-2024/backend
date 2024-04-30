@@ -5,9 +5,14 @@ const postSql = {
         "SELECT id, author_id, title, description, votes, created_at FROM Posts",
     sqlPost:
         "INSERT INTO Posts (author_id, title, description, votes, created_at) VALUES (?, ?, ?, ?, ?)",
-    sqlPut:
-        "UPDATE Posts SET author_id = ?, title = ?, description = ?, votes = ? WHERE id = ?",
-    sqlDelete: "DELETE FROM Posts WHERE id = ?"
+    sqlPutTitle:
+        "UPDATE Posts SET title = ? WHERE id = ?",
+    sqlPutDescription:
+        "UPDATE Posts SET description = ? WHERE id = ?",
+    sqlPutVotes:
+        "UPDATE Posts SET votes = ? WHERE id = ?",
+    sqlDelete: 
+        "DELETE FROM Posts WHERE id = ?"
 }
 
 module.exports = postSql;
