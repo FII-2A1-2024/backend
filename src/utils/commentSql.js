@@ -1,6 +1,10 @@
 const { sqlPutDescription } = require("./postSql");
 
 const commentSql = {
+    sqlGet:
+        "Select * FROM Comments WHERE id = ?",
+    sqlGetPost:
+        "SELECT author_id, title, description, votes, created_at, category FROM Posts WHERE id=?",
     sqlGetAll:
         "SELECT id, post_id, parent_id, author_id, description, votes, votes, created_at FROM Comments WHERE post_id = ?",
     sqlPost:

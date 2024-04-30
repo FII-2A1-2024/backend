@@ -7,7 +7,7 @@ class CommentController {
             const post = await commentServices.getAll(post_id);
             res.status(200).json({ post });
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({ "status":"err", "message":  error.message});
         }
     }
     static async post(req, res) {
@@ -20,18 +20,18 @@ class CommentController {
                 description,
                 votes
             );
-            res.status(200).send("Comment added to db");
+            res.status(200).json({"status":"ok", "message":"Comment added to db"});
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({"status":"err", "message": error.message});
         }
     }
     static async delete(req, res) {
         const {id} = req.query;
         try{
             await commentServices.delete(id);
-            res.status(200).send("Comment deleted from db");
+            res.status(200).json({ "status":"ok", "message":"comment deleted successfully" });
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({ "status":"err", "message": error.message });
         }
     }
     static async put(req, res) {
@@ -42,9 +42,9 @@ class CommentController {
             } else if (votes !== undefined && description == undefined) {
                 await commentServices.putVotes(id, votes);
             }
-            res.status(200).send("Comment updated in db");
+            res.status(200).json({ "status":"ok", "message":"Comment updated in db"});
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({ "status":"err", "message": error.message });
         }
     }
 }
