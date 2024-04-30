@@ -132,8 +132,6 @@ class PostService {
                 throw new Error("Invalid id");
             if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
                 throw new Error("Invalid votes");
-            if(!category || category.length > 50 || category.length == 0)
-                throw new Error("Category entry too long/empty");
 
             const values = [votes, id];
             const results = await dbQuery(values, sql.sqlPutVotes);

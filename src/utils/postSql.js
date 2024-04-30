@@ -4,7 +4,7 @@ const postSql = {
     sqlGetAll:
         "SELECT id, author_id, title, description, votes, created_at, category FROM Posts",
     sqlPost:
-        "INSERT INTO Posts (author_id, title, description, votes, created_at) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO Posts (author_id, title, description, votes, created_at, category) VALUES (?, ?, ?, ?, ?, ?)",
     sqlPutTitle:
         "UPDATE Posts SET title = ? WHERE id = ?",
     sqlPutDescription:
