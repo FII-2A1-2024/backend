@@ -7,6 +7,8 @@ const passwordHashHandler = require("../../utils/generateHash");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+
+
 async function changePassword(req, res) {
 	const token = req.query.token;
 
