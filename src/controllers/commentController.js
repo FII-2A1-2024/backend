@@ -35,12 +35,13 @@ class CommentController {
         }
     }
     static async put(req, res) {
-        const { id, description} = req.body;
+        const { id, description, votes} = req.body;
         try {
-            await commentServices.put(
-                id,
-                description
-            );
+            if (description !== undefined && votes == undefined) {
+                await commentServices.putDescription(id, description);
+            } else if (votes !== undefined && description == undefined) {
+                await commentServices.putVotes(id, votes);
+            }
             res.status(200).send("Comment updated in db");
         } catch (error) {
             res.status(500).send("Error occured: " + error);

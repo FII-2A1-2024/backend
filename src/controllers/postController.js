@@ -34,16 +34,16 @@ class PostController {
         }
     }
     static async put(req, res) {
-        const { id, author_id, title, description, votes, category } = req.body;
+        const { id, title, description, votes } =
+            req.body;
         try {
-            await postServices.put(
-                id,
-                author_id,
-                title,
-                description,
-                votes,
-                category
-            );
+            if (title !== undefined && description == undefined && votes == undefined) {
+                await postServices.putTitle(id, title);
+            } else if (description !== undefined && title == undefined && votes == undefined) {
+                await postServices.putDescription(id, description);
+            } else if (votes !== undefined && title == undefined && description == undefined) {
+                await postServices.putVotes(id, votes);
+            }
             res.status(200).json({ "status":"ok", "message":"post updated successfully" });
         } catch (error) {
             res.status(500).json({ "status":"err", "message": error.message });
