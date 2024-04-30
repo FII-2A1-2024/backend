@@ -1,4 +1,4 @@
-const userService = require('../services/signUpService')
+const signUpService = require('../services/signUpService')
 const verifyEmailSyntax = require('../utils/verifyEmailSyntax')
 const HttpCodes = require('../config/returnCodes')
 const normalizeEmail = require('../utils/normalizeEmail')
@@ -17,7 +17,7 @@ async function signUp(req, res){
             code = HttpCodes.INVALID_EMAIL
             console.log("Nu introducem userul in baza de date, are email gresit");
         } else{
-            code = await userService.createUser(username, password)
+            code = await signUpService.createUser(username, password)
         }
         res.send({resCode: code})
     } catch (error){

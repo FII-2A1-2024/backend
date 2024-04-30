@@ -1,14 +1,12 @@
-const existsInDB = require("../models/existsInDb");
-const isVerified = require("../models/isVerified");
 const HttpCodes = require("../config/returnCodes.js");
-const passwordHashHandler = require("../utils/addUserInDb.js")
+const UserService = require('../services/userServices.js')
 
 async function checkExistence(email, password) {
 	let code = HttpCodes.SUCCESS;
-	const hashedPassword = passwordHashHandler.generateHash(password);
-	const userExistsInDB = await existsInDB(email, password);
+	//TODO
+	const userExistsInDB = await UserService.validCredentials(email, password);
 	if (userExistsInDB === HttpCodes.SUCCESS) {
-		const userVerified = await isVerified(email);
+		const userVerified = await UserService.isVerifed(email);
 		if (userVerified) {
 			code = HttpCodes.SUCCESS;
 		} else {
