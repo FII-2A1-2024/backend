@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const privateKeyHandler = require("../../utils/JWT/JWTSecretGeneration");
+const resetTokenServices = require("../../utils/JWT/resetToken");
+
 const HttpCodes = require("../../config/returnCodes");
 const passwordHashHandler = require('../../utils/generateHash')
 
