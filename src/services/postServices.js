@@ -18,7 +18,8 @@ class PostService {
                 result[0].title,
                 result[0].description,
                 result[0].votes,
-                createdAtString
+                createdAtString,
+                result[0].category
             );
             return receivedPost;
         } else {
@@ -38,7 +39,8 @@ class PostService {
                     result.title,
                     result.description,
                     result.votes,
-                    createdAtString
+                    createdAtString,
+                    result.category
                 );
                 receivedPosts.push(receivedPost);
             });
@@ -52,7 +54,8 @@ class PostService {
         author_id,
         title,
         description,
-        votes
+        votes,
+        category
     ) {
         const createdAt = new Date();
 
@@ -64,8 +67,10 @@ class PostService {
             throw new Error("Description entry too long/empty");
         if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
             throw new Error("Invalid votes");
+        if(!category || category.length > 50 || category.length == 0)
+            throw new Error("Category entry too long/empty");
 
-        const values = [author_id, title, description, votes, createdAt];
+        const values = [author_id, title, description, votes, createdAt, category];
         const results = await dbQuery(values, sql.sqlPost);
         if (!results) 
             throw new Error("Post couldn't be created");
@@ -127,6 +132,8 @@ class PostService {
                 throw new Error("Invalid id");
             if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
                 throw new Error("Invalid votes");
+            if(!category || category.length > 50 || category.length == 0)
+                throw new Error("Category entry too long/empty");
 
             const values = [votes, id];
             const results = await dbQuery(values, sql.sqlPutVotes);
