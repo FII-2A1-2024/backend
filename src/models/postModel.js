@@ -5,7 +5,8 @@ class Post {
         title,
         description,
         votes,
-        created_at
+        created_at,
+        category
     ) {
         this.id = id;
         this.author_id = author_id;
@@ -13,6 +14,7 @@ class Post {
         this.description = description;
         this.votes = votes;
         this.created_at = created_at;
+        this.category = category;
     }
 }
 

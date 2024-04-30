@@ -1,12 +1,12 @@
 const postSql = {
     sqlGet:
-        "SELECT author_id, title, description, votes, created_at FROM Posts WHERE id=?",
+        "SELECT author_id, title, description, votes, created_at, category FROM Posts WHERE id=?",
     sqlGetAll:
-        "SELECT id, author_id, title, description, votes, created_at FROM Posts",
+        "SELECT id, author_id, title, description, votes, created_at, category FROM Posts",
     sqlPost:
-        "INSERT INTO Posts (author_id, title, description, votes, created_at) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO Posts (author_id, title, description, votes, created_at, category) VALUES (?, ?, ?, ?, ?, ?)",
     sqlPut:
-        "UPDATE Posts SET author_id = ?, title = ?, description = ?, votes = ? WHERE id = ?",
+        "UPDATE Posts SET author_id = ?, title = ?, description = ?, votes = ?, category = ? WHERE id = ?",
     sqlDelete: "DELETE FROM Posts WHERE id = ?"
 }
 
