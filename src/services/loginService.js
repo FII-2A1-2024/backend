@@ -6,6 +6,7 @@ async function checkExistence(email, password) {
 
 	if (userExistsInDB !== HttpCodes.SUCCESS) {
 		return userExistsInDB;
+
 	}
 
 	const userVerified = await UserService.isVerifed(email);
