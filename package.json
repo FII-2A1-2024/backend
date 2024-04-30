@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "server": "nodemon src/server.js"
+    "server": "nodemon src/server.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -20,5 +21,8 @@
     "path": "^0.12.7",
     "prisma": "^5.12.1",
     "sendgrid": "^5.2.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
