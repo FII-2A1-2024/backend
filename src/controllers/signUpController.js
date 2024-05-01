@@ -6,7 +6,7 @@ const normalizeEmail = require('../utils/normalizeEmail')
 async function signUp(req, res){
     try{
         const password = req.body.password;
-        let username = req.body.username;
+        let username = req.body.email;
 
         //Vom normaliza emailul in cazul in care pune si litere mari
         username = normalizeEmail(username)

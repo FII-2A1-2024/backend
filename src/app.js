@@ -9,6 +9,7 @@ const authenticateToken = require('./utils/JWT/JWTAuthentication')
 const generateAccessToken = require('./utils/JWT/JWTGeneration')
 const loginRouter = require("./routes/login");
 const jwt = require('jsonwebtoken')
+const optionsRouter = require('./routes/options')
 
 
 app
@@ -17,7 +18,7 @@ app
     .use(postRoutes)
     .use("/login", loginRouter)
     .use("/resetPass", resetPassword)
-    .use(commentRoutes);
-    
+    .use(commentRoutes)
+    .use("/options", optionsRouter)
 
 module.exports = app;
