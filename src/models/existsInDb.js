@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt')
+const { PrismaClient } = require("@prisma/client");
+const HttpCodes = require("../config/returnCodes.js");
 
 const prisma = new PrismaClient();
 
@@ -27,6 +27,4 @@ async function existsInDBEmailAndPass(email, password) {
 	}
 }
 
-
-
-module.exports = existsInDBEmailAndPass
+module.exports = existsInDBEmailAndPass;

@@ -11,7 +11,7 @@ class CommentController {
         }
     }
     static async post(req, res) {
-        const { post_id, parent_id, author_id, description, votes} = req.query;
+        const { post_id, parent_id, author_id, description, votes} = req.body;
         try {
             await commentServices.post(
                 post_id,
@@ -20,7 +20,7 @@ class CommentController {
                 description,
                 votes
             );
-            res.status(200).send("Post added to db");
+            res.status(200).send("Comment added to db");
         } catch (error) {
             res.status(500).send("Error occured: " + error);
         }
@@ -35,12 +35,13 @@ class CommentController {
         }
     }
     static async put(req, res) {
-        const { id, description} = req.query;
+        const { id, description, votes} = req.body;
         try {
-            await commentServices.put(
-                id,
-                description
-            );
+            if (description !== undefined && votes == undefined) {
+                await commentServices.putDescription(id, description);
+            } else if (votes !== undefined && description == undefined) {
+                await commentServices.putVotes(id, votes);
+            }
             res.status(200).send("Comment updated in db");
         } catch (error) {
             res.status(500).send("Error occured: " + error);

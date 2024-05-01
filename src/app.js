@@ -3,6 +3,7 @@ const app = express();
 const resetPassword = require("./routes/resetPassword");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const postFollowRoutes = require("./routes/postFollowRoutes");
 const signUpRouter = require('./routes/signUp')
 const jwtSecretHandler = require('./utils/JWT/JWTSecretGeneration')
 const authenticateToken = require('./utils/JWT/JWTAuthentication')
@@ -10,7 +11,6 @@ const generateAccessToken = require('./utils/JWT/JWTGeneration')
 const loginRouter = require("./routes/login");
 const jwt = require('jsonwebtoken')
 const adminRoutes = require("./routes/Admin&UserRoutes/adminRoutes");
-const userRoutes = require("./routes/Admin&UserRoutes/userRoutes");
 const isUser = require("./utils/Middleware/isUser");
 
 app
@@ -18,8 +18,9 @@ app
     .use("/signup", signUpRouter)
     .use("/login", loginRouter)
     .use("/resetPass", resetPassword)
-    .use(authenticateToken,isUser,postRoutes)
-    .use(authenticateToken,isUser,commentRoutes)  //avem nevoie de token pt a accesa postari
-    .use(adminRoutes)
-    .use(userRoutes)
+    //we need token here, also the path remains the same, however i put the prefix like this 
+    //for the isUser to function correctly 
+    .use("/posts",authenticateToken,isUser,postRoutes) 
+    .use("/comments",authenticateToken,isUser,commentRoutes)
+    .use(adminRoutes) 
 module.exports = app;

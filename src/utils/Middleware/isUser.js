@@ -17,7 +17,7 @@ async function isUser(req, res, next) {
         });
 
         if (admin) {
-            return res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized access - this is an admin' });
         } else {
             next();
         }

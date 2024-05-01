@@ -60,12 +60,19 @@ class commentServices {
             createdAt];
         const results = await dbQuery(values, sql.sqlPost);
     }
-    static async put(
+    static async putDescription(
         id,
         description
     ) {
         const values = [description, id];
-        const results = await dbQuery(values, sql.sqlPut);
+        const results = await dbQuery(values, sql.sqlPutDescription);
+    }
+    static async putVotes(
+        id,
+        votes
+    ) {
+        const values = [votes, id];
+        const results = await dbQuery(values, sql.sqlPutVotes);
     }
     static async delete(id) {
 
@@ -90,13 +97,6 @@ class commentServices {
         results.forEach((result) => {
             this.delete(result.id);
         });
-    }
-    static async put(
-        id,
-        description
-    ) {
-        const values = [description, id];
-        const results = await dbQuery(values, sql.sqlPut);
     }
 }
 

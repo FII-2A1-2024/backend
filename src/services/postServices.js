@@ -18,7 +18,8 @@ class PostService {
                 result[0].title,
                 result[0].description,
                 result[0].votes,
-                createdAtString
+                createdAtString,
+                result[0].category
             );
             return receivedPost;
         } else {
@@ -38,7 +39,8 @@ class PostService {
                     result.title,
                     result.description,
                     result.votes,
-                    createdAtString
+                    createdAtString,
+                    result.category
                 );
                 receivedPosts.push(receivedPost);
             });
@@ -52,7 +54,8 @@ class PostService {
         author_id,
         title,
         description,
-        votes
+        votes,
+        category
     ) {
         const createdAt = new Date();
 
@@ -64,17 +67,60 @@ class PostService {
             throw new Error("Description entry too long/empty");
         if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
             throw new Error("Invalid votes");
+        if(!category || category.length > 50 || category.length == 0)
+            throw new Error("Category entry too long/empty");
 
-        const values = [author_id, title, description, votes, createdAt];
+        const values = [author_id, title, description, votes, createdAt, category];
         const results = await dbQuery(values, sql.sqlPost);
         if (!results) 
             throw new Error("Post couldn't be created");
     }
-    static async put(
+    static async putTitle(
         id,
-        author_id,
-        title,
-        description,
+        title
+    ) {
+
+        const to_check = [id];
+        const result = await dbQuery(to_check, sql.sqlGet);
+        if (result && result.length > 0){
+
+            if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
+                throw new Error("Invalid id");
+            if(!title || title.length > 50 || title.length == 0)
+                throw new Error("Title entry too long/empty");
+
+            const values = [title, id];
+            const results = await dbQuery(values, sql.sqlPutTitle);
+            if (!results) 
+                throw new Error("Post couldn't be updated");
+        }
+        else throw new Error("Post with the given id doesn't exist");
+
+    }
+    static async putDescription(
+        id,
+        description
+    ) {
+
+        const to_check = [id];
+        const result = await dbQuery(to_check, sql.sqlGet);
+        if (result && result.length > 0){
+
+            if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
+                throw new Error("Invalid id");
+            if(!description || description.length > 65535 || description.length == 0)
+                throw new Error("Description entry too long/empty");
+
+            const values = [description, id];
+            const results = await dbQuery(values, sql.sqlPutDescription);
+            if (!results) 
+                throw new Error("Post couldn't be updated");
+        }
+        else throw new Error("Post with the given id doesn't exist");
+
+    }
+    static async putVotes(
+        id,
         votes
     ) {
 
@@ -84,17 +130,11 @@ class PostService {
 
             if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
                 throw new Error("Invalid id");
-            if(!author_id || isNaN(parseInt(author_id)) || parseInt(author_id) <= 0)  
-                throw new Error("Invalid author_id");
-            if(!title || title.length > 50 || title.length == 0)
-                throw new Error("Title entry too long/empty");
-            if(!description || description.length > 65535 || description.length == 0)
-                throw new Error("Description entry too long/empty");
             if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
                 throw new Error("Invalid votes");
 
-            const values = [author_id, title, description, votes, id];
-            const results = await dbQuery(values, sql.sqlPut);
+            const values = [votes, id];
+            const results = await dbQuery(values, sql.sqlPutVotes);
             if (!results) 
                 throw new Error("Post couldn't be updated");
         }

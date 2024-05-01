@@ -21,7 +21,7 @@ async function isAdmin(req, res, next) {
         if (admin) {
             next();
         } else {
-            return res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized - this is an user' });
         }
     } catch (error) {
         console.error('Error:', error);
