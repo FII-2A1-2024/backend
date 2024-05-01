@@ -1,26 +1,22 @@
 const express = require("express");
 const app = express();
-const resetPassword = require("./routes/resetPassword");
+const resetPasswordRoutes = require("./routes/resetPassword");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const postFollowRoutes = require("./routes/postFollowRoutes");
-const signUpRouter = require('./routes/signUp')
-const jwtSecretHandler = require('./utils/JWT/JWTSecretGeneration')
-const authenticateToken = require('./utils/JWT/JWTAuthentication')
-const generateAccessToken = require('./utils/JWT/JWTGeneration')
-const loginRouter = require("./routes/login");
-const jwt = require('jsonwebtoken')
-const optionsRouter = require('./routes/options')
+const signUpRoutes = require('./routes/signUp')
+const loginRoutes = require("./routes/login");
+const optionsRoutes = require('./routes/options')
 
 
 app
     .use(express.json())
-    .use("/signup", signUpRouter)
+    .use(signUpRoutes)
     .use(postRoutes)
-    .use("/login", loginRouter)
-    .use("/resetPass", resetPassword)
+    .use(loginRoutes)
+    .use(resetPasswordRoutes)
     .use(commentRoutes)
-    .use("/options", optionsRouter)
+    .use(optionsRoutes)
     .use(postFollowRoutes);
     
 
