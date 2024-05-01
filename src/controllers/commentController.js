@@ -11,7 +11,7 @@ class CommentController {
         }
     }
     static async post(req, res) {
-        const { post_id, parent_id, author_id, description, votes} = req.body;
+        const { post_id, parent_id, author_id, description, votes } = req.body;
         try {
             await commentServices.post(
                 post_id,
@@ -26,7 +26,7 @@ class CommentController {
         }
     }
     static async delete(req, res) {
-        const {id} = req.query;
+        const id = parseInt(req.query.id);
         try{
             await commentServices.delete(id);
             res.status(200).json({ "status":"ok", "message":"Comment deleted successfully" });
@@ -35,7 +35,7 @@ class CommentController {
         }
     }
     static async put(req, res) {
-        const { id, description, votes} = req.body;
+        const { id, description, votes } = req.body;
         try {
             if (description !== undefined && votes == undefined) {
                 await commentServices.putDescription(id, description);
