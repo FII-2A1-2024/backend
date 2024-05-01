@@ -5,7 +5,7 @@ class CommentController {
         const post_id = parseInt(req.query.post_id);
         try {
             const post = await commentServices.getAll(post_id);
-            res.status(200).json({"status":"ok"});
+            res.status(200).json({"status":"ok", post});
         } catch (error) {
             res.status(500).json({ "status":"err", "message":  error.message});
         }
