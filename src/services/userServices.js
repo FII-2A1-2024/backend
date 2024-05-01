@@ -32,7 +32,7 @@ class UserService{
     async validCredentials(email, password){
         return UserService.checkCredentials(email, password)
     }
-    
+
     async addEmail(email, newEmail){
         return UserService.insertSecondEmail(email, newEmail)
     }
@@ -40,6 +40,7 @@ class UserService{
     async hasSecondaryEmail(email){
         return UserService.checkSecondEmail(email)
     }
+
     static async insert(newUser){
         try{
             const hashedPassword = generateHash(newUser.password);
@@ -128,6 +129,9 @@ class UserService{
         }
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 62b76d2 ([BE2-023] Added secondary email management option)
 
     static async insertSecondEmail(email, newEmail){
         try{
@@ -154,8 +158,11 @@ class UserService{
             console.log("Error checking secondary email: " + error);
         }
     }
+<<<<<<< HEAD
 =======
 >>>>>>> e20615a ([BE2-031] Modifed folder structure, refactoring, added UserService class)
+=======
+>>>>>>> 62b76d2 ([BE2-023] Added secondary email management option)
 }
 
 module.exports = new UserService()
