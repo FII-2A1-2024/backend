@@ -5,13 +5,13 @@ class CommentController {
         const post_id = parseInt(req.query.post_id);
         try {
             const post = await commentServices.getAll(post_id);
-            res.status(200).json({ post });
+            res.status(200).json({"status":"ok", post});
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({ "status":"err", "message":  error.message});
         }
     }
     static async post(req, res) {
-        const { post_id, parent_id, author_id, description, votes} = req.query;
+        const { post_id, parent_id, author_id, description, votes } = req.body;
         try {
             await commentServices.post(
                 post_id,
@@ -20,30 +20,31 @@ class CommentController {
                 description,
                 votes
             );
-            res.status(200).send("Post added to db");
+            res.status(200).json({"status":"ok", "message":"Comment added to db"});
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({"status":"err", "message": error.message});
         }
     }
     static async delete(req, res) {
-        const {id} = req.query;
+        const id = parseInt(req.query.id);
         try{
             await commentServices.delete(id);
-            res.status(200).send("Comment deleted from db");
+            res.status(200).json({ "status":"ok", "message":"Comment deleted successfully" });
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({ "status":"err", "message": error.message });
         }
     }
     static async put(req, res) {
-        const { id, description} = req.query;
+        const { id, description, votes } = req.body;
         try {
-            await commentServices.put(
-                id,
-                description
-            );
-            res.status(200).send("Comment updated in db");
+            if (description !== undefined && votes == undefined) {
+                await commentServices.putDescription(id, description);
+            } else if (votes !== undefined && description == undefined) {
+                await commentServices.putVotes(id, votes);
+            }
+            res.status(200).json({ "status":"ok", "message":"Comment updated in db"});
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
+            res.status(500).json({ "status":"err", "message": error.message });
         }
     }
 }
