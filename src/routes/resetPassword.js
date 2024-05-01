@@ -7,13 +7,13 @@ router
 	.get("/", (req, res) => {
 		res.send({ data: "user wants to change password" });
 	})
-	.post("/", (req, res) => {
+	.post("/resetPass", (req, res) => {
 		resetPasswordController(req, res);
 	})
-	.get("/verify", (req, res) => {
+	.get("/resetPass/verify", (req, res) => {
 		res.send({ data: "insert new password" });
 	})
-	.post("/verify", (req, res) => {
+	.post("/resetPass/verify", (req, res) => {
 		changePasswordController(req, res);
 	});
 
