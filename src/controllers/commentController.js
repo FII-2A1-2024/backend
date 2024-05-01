@@ -5,7 +5,7 @@ class CommentController {
         const post_id = parseInt(req.query.post_id);
         try {
             const post = await commentServices.getAll(post_id);
-            res.status(200).json({ post });
+            res.status(200).json({"status":"ok"});
         } catch (error) {
             res.status(500).json({ "status":"err", "message":  error.message});
         }
@@ -29,7 +29,7 @@ class CommentController {
         const {id} = req.query;
         try{
             await commentServices.delete(id);
-            res.status(200).json({ "status":"ok", "message":"comment deleted successfully" });
+            res.status(200).json({ "status":"ok", "message":"Comment deleted successfully" });
         } catch (error) {
             res.status(500).json({ "status":"err", "message": error.message });
         }
