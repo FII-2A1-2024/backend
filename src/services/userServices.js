@@ -33,6 +33,7 @@ class UserService {
         return UserService.checkCredentials(email, password)
     }
 
+<<<<<<< HEAD
     async addEmail(email, newEmail) {
         return UserService.insertSecondEmail(email, newEmail)
     }
@@ -94,6 +95,18 @@ class UserService {
 
     static async insert(newUser) {
         try {
+=======
+    async addEmail(email, newEmail){
+        return UserService.insertSecondEmail(email, newEmail)
+    }
+
+    async hasSecondaryEmail(email){
+        return UserService.checkSecondEmail(email)
+    }
+
+    static async insert(newUser){
+        try{
+>>>>>>> 62b76d2 ([BE2-023] Added secondary email management option)
             const hashedPassword = generateHash(newUser.password);
             const instance = await prisma.user.create({
                 data: {
@@ -197,6 +210,7 @@ class UserService {
         }
     }
 
+<<<<<<< HEAD
     static async insertSecondEmail(email, newEmail) {
         try {
             await prisma.user.update({
@@ -206,19 +220,39 @@ class UserService {
                 }
             })
         } catch (error) {
+=======
+    static async insertSecondEmail(email, newEmail){
+        try{
+            await prisma.user.update({
+                where: { emailPrimary: email },
+                data: {
+                  emailSecondary: newEmail
+                }
+            })
+        } catch(error){
+>>>>>>> 62b76d2 ([BE2-023] Added secondary email management option)
             console.log("Error adding second email -> ", error);
         }
     }
 
+<<<<<<< HEAD
     static async checkSecondEmail(email) {
         try {
+=======
+    static async checkSecondEmail(email){
+        try{
+>>>>>>> 62b76d2 ([BE2-023] Added secondary email management option)
             const user = await prisma.user.findUnique({
                 where: {
                     emailPrimary: email
                 }
             })
             return user && user.emailSecondary !== 'null'
+<<<<<<< HEAD
         } catch (error) {
+=======
+        } catch(error){
+>>>>>>> 62b76d2 ([BE2-023] Added secondary email management option)
             console.log("Error checking secondary email: " + error);
         }
     }
