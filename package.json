@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm run prisma && npm run server",
     "server": "nodemon src/server.js",
-    "prisma": "npx prisma generate"
+    "prisma": "npx prisma generate",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +23,14 @@
     "mysql": "^2.18.1",
     "path": "^0.12.7",
     "prisma": "^5.12.1",
+<<<<<<< HEAD
     "sendgrid": "^5.2.3",
     "validator": "^13.11.0"
+=======
+    "sendgrid": "^5.2.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+>>>>>>> main
   }
 }
