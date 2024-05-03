@@ -1,11 +1,8 @@
 const jwt = require('jsonwebtoken')
-const existsInDB = require('../utils/userExistsInDb')
-const userIsVerified = require('../utils/userIsVerified')
-const markUserAsVerified = require('../utils/markUserVerified')
 const HttpCodes = require('../config/returnCodes')
-const signUpService = require('../services/signUpService')
 const privateKeyHandler = require('../utils/JWT/JWTSecretGeneration')
 
+const UserService = require('../services/userServices')
 
 async function verifyEmail(req, res){
     const token = req.query.token;
@@ -25,22 +22,24 @@ async function verifyEmail(req, res){
         const email = decoded.email
         
         //!exista userul??
-        const userExistsResult = await existsInDB(email);
-        if (!userExistsResult) {
-            res.status(HttpCodes.USER_DOESNOT_EXIST).send('User does not exist');
-            console.log("Eroare de user does not exist");
-            return
-        }
+        UserService.existsInDB(email).then(result => {
+            if(!result){
+                res.status(HttpCodes.USER_DOESNOT_EXIST).send('User does not exist');
+                console.log("Eroare de user does not exist");
+                return
+            }
+        })
+
 
         //! e deja verificat userul??
-        const userIsVerifiedResult = await userIsVerified(email);
+        const userIsVerifiedResult = await UserService.isVerifed(email);
         if (userIsVerifiedResult) {
             res.status(HttpCodes.ALREADY_VERIFIED).send('You are already verified');
             console.log("Eroare de user already verified");
             return
         }
         //TODO verifica userul
-        await markUserAsVerified(email);
+        await UserService.markUserVerified(email);
         console.log("Totul e ok si userul a fost verificat");
 
         //? Cand e totul ok

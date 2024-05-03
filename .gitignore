@@ -1,2 +1,5 @@
 node_modules
 *.local
+.vscode/settings.json
+.vscode/*
+src/utils/tester.js

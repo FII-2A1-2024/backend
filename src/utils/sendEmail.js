@@ -9,14 +9,14 @@ dotenv.config({ path: envPath });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmail = async (name, verificationLink) => {
+const sendEmail = async (name, verificationLink, templateId) => {
     const msg = {
         to: name,
         from: {
             name: 'AOT@doNotReply.com',
             email: process.env.FROM_EMAIL
         },
-        templateId: process.env.TEMPLATE_ID,
+        templateId: templateId,
         dynamicTemplateData: {
             name: "friend",
             verification_link: verificationLink
