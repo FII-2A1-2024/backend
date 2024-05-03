@@ -34,4 +34,29 @@ const sendEmail = async (name, verificationLink, templateId) => {
     }
 };
 
-module.exports = sendEmail;
+async function sendCustomEmail(to, subject, content) {
+    const msg = {
+        to: to,
+        from: {
+            name: "AOT@doNotReply.com",
+            email: process.env.FROM_EMAIL,
+        },
+        subject: subject,
+        text: content,
+    };
+
+    try {
+        await sgMail.send(msg);
+    } catch (error) {
+        console.error(error);
+
+        if (error.response) {
+            console.error(error.response.body);
+        }
+    }
+}
+
+module.exports = {
+    sendEmail: sendEmail,
+    sendCustomEmail: sendCustomEmail
+};

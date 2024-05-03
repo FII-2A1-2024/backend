@@ -41,6 +41,28 @@ class UserService {
         return UserService.checkSecondEmail(email)
     }
 
+    async getIdByEmail(email) {
+        return UserService.getIdByEmailLogic(email)
+    }
+
+    static async getIdByEmailLogic(email) {
+        try {
+            const user = await prisma.user.findUnique({
+                where: {
+                    emailPrimary: email,
+                }
+            });
+            if (user != null) {
+                return user.uid;
+            }
+            console.log("User not found");
+            return null;
+        } catch (error) {
+            console.error("Error retrieving user:", error);
+            throw error;
+        }
+    }
+
     static async insert(newUser) {
         try {
             const hashedPassword = generateHash(newUser.password);
