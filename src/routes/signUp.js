@@ -9,11 +9,11 @@ router
     res.send({ data: "User exists" })
 })
 
-.get('/verify', async (req, res) => {
+.get('/signup/verify', async (req, res) => {
     emailController(req, res)
     // res.status(status).send(toSend)
 })    
-.post("/", (req, res) => {
+.post("/signup", (req, res) => {
     console.log("req: ", req.body)
     signUpController(req, res)
 })

@@ -3,7 +3,7 @@
 // with a reset link
 
 const sendEmail = require('../../utils/sendEmail')
-const resetTokenServices = require("../../utils/JWT/resetToken");
+const tokenGeneration = require("../../utils/JWT/JWTGeneration")
 const HttpCodes = require("../../config/returnCodes");
 const UserService = require('../../services/userServices')
 
@@ -14,9 +14,11 @@ async function resetPassword(req, res) {
 	const emailFound = await UserService.existsInDB(email);
 	if (emailFound) {
 		console.log("Am gasit email-ul: " + email);
-		const resetToken = resetTokenServices.generateResetToken(email);
+		const resetToken = tokenGeneration.generateResetToken(email);
 		const resetLink = `http://${process.env.SERVER_IP}:${process.env.SERVER_PORT}/resetPass/verify?token=${resetToken}`;
-		sendEmail(email, resetLink, process.env.TEMPLATE_ID_CHANGEPASS);
+		//process.env.TEMPLATE_ID este temporar folosit aici,env.local va fi actualizat cu un template nou pentru
+		//emailul de resetare a parolei
+		sendEmail(email, resetLink, process.env.TEMPLATE_ID);
 		res.sendStatus(HttpCodes.SUCCESS);
 	} else {
 		console.log("Nu am gasit email-ul: " + email);

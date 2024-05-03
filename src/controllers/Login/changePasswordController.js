@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const resetTokenServices = require("../../utils/JWT/resetToken");
+const privateKeyHandler = require("../../utils/JWT/JWTSecretGeneration");
 const HttpCodes = require("../../config/returnCodes");
 const passwordHashHandler = require('../../utils/generateHash')
 
@@ -12,7 +12,7 @@ async function changePassword(req, res) {
 	const token = req.query.token;
 
 	try {
-		const decoded = jwt.verify(token, resetTokenServices.privateKey);
+		const decoded = jwt.verify(token, privateKeyHandler.jwtSecret);
 		const currTime = Date.now();
 		const tokenStamp = decoded.timestamp;
 		const maxVerifyTime = 5 * 60 * 1000; //5 min in milisecunde
