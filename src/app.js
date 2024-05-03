@@ -11,7 +11,9 @@ const generateAccessToken = require('./utils/JWT/JWTGeneration')
 const loginRouter = require("./routes/login");
 const jwt = require('jsonwebtoken')
 const optionsRouter = require('./routes/options')
+const cors = require('cors')
 
+app.use(cors())
 
 app
     .use(express.json())
@@ -21,7 +23,6 @@ app
     .use("/resetPass", resetPassword)
     .use(commentRoutes)
     .use("/options", optionsRouter)
-    .use(postFollowRoutes);
-    
+    .use(postFollowRoutes)
 
 module.exports = app;
