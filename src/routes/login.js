@@ -8,7 +8,7 @@ router
 	.get("/", (req, res) => {
 		res.send({ data: "No data yet" });
 	})
-	.post("/", (req, res) => {
+	.post("/login", (req, res) => {
 		loginController(req, res);
 	});
 

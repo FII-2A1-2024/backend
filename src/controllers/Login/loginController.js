@@ -1,10 +1,8 @@
 const checkExistence = require("../../services/loginService");
 const verifyEmailSyntax = require("../../utils/verifyEmailSyntax");
 const HttpCodes = require("../../config/returnCodes");
-const bcrypt = require('bcrypt');
 const tokenGeneration = require("../../utils/JWT/JWTGeneration");
-const passwordHashHandler = require("../../utils/addUserInDb");
-const e = require("express");
+const passwordHashHandler = require('../../utils/generateHash');
 
 async function login(req, res) {
 	try {
@@ -15,7 +13,7 @@ async function login(req, res) {
 			code = HttpCodes.INVALID_EMAIL;
 		} else {
 			// email valid
-			const hashedPassword = await passwordHashHandler.generateHash(password) ;
+			const hashedPassword = passwordHashHandler(password) ;
 			code = await checkExistence(email, hashedPassword);
 		}
 		
@@ -24,7 +22,6 @@ async function login(req, res) {
 			// console.log(token);
 			res.send({ resCode: code, token: token });
 		} else {
-			console.log("Am intrat in astalalt");
 			res.send({ resCode: code});
 		}
 			
