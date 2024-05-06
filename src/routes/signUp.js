@@ -9,15 +9,16 @@ router
     res.send({ data: "User exists" })
 })
 
-.get('/verify', async (req, res) => {
+.get('/signup/verify', async (req, res) => {
     emailController(req, res)
     // res.status(status).send(toSend)
 })    
-.post("/", (req, res) => {
+.post("/signup", (req, res) => {
     console.log("req: ", req.body)
     signUpController(req, res)
 })
 .get("/", (req, res) => {
-    res.send({data : "No data yet"})
+    res.send({data : "No data yet"}).status(200)
+    console.log("Am primit req");
 })
 module.exports = router

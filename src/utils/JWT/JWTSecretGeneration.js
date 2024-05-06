@@ -7,7 +7,7 @@ function generateSecret(length) {
 }
 
 const jwtSecret = generateSecret(32);
-console.log(jwtSecret);
+// console.log(jwtSecret);
 module.exports = {
     jwtSecret: jwtSecret
 };

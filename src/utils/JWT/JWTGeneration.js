@@ -16,7 +16,19 @@ function generateVerificationToken(email) {
   }, jwtSecretHandler.jwtSecret, { expiresIn: '24h' })
 }
 
+function generateResetToken(email) {
+  return jwt.sign(
+    {
+      email: email,
+      timestamp: Date.now(),
+    },
+    jwtSecretHandler.jwtSecret,
+    { expiresIn: "5min" },
+  );
+}
+
 module.exports = {
   generateAccessToken,
   generateVerificationToken,
+  generateResetToken
 } 
