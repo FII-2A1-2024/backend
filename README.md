@@ -24,4 +24,3 @@
   - ```JWTAuthentication```: Acest fisier contine logica pentru verificarea unui token. Va restrictiona orice endpoint unde este folosit in caz ca tokenul lipseste sau nu are permisiunea corespunzatoare.
   - ```JWTGeneration```: Acest fisier contine logica de generat tokene. Momentan se genereaza tokene pentru doua cazuri: pentru login si pentru verificarea email-ului cand userul creaza un cont.
   - ```JWTSecretGeneration```: Acest fisier contine logica de generat o cheie privata (```JWT Secret```). Va fi folosit de un user la fiecare pornire a serverului.
->>>>>>> origin/main
