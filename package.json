@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
+    "package": "node src/server.js",
     "start": "npm run prisma && npm run server",
     "server": "nodemon src/server.js",
     "prisma": "npx prisma generate",
