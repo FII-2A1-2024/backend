@@ -129,7 +129,6 @@ class commentServices {
         if (results == null) 
             throw new Error("Comment couldn't be created");
     }
-
     static async putDescription(
         id,
         description
