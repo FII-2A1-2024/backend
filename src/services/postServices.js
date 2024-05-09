@@ -232,7 +232,7 @@ class PostService {
         if (result != null){
             if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
                 throw new Error("Invalid id");
-            if(!category || category.length > 65535 || category.length == 0)
+            if(!category || category.length > 50 || category.length == 0)
                 throw new Error("Description entry too long/empty");
 
             let results = null;

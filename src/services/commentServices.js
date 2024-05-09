@@ -356,7 +356,6 @@ class commentServices {
                 this.delete(result.id);
             });
         }
-       // else throw new Error("Post with the given id doesn't exist");
     }
 }
 
