@@ -30,8 +30,9 @@ class PostService {
                 result.description,
                 result.votes,
                 createdAtString,
-                result.category
-            );
+                result.category,
+                result.comments_count
+                );
             return receivedPost;
         } else {
             throw new Error("No post found with the given id");
@@ -60,7 +61,8 @@ class PostService {
                     result.description,
                     result.votes,
                     createdAtString,
-                    result.category
+                    result.category,
+                    result.comments_count
                 );
                 receivedPosts.push(receivedPost);
             });
@@ -85,10 +87,17 @@ class PostService {
             throw new Error("Title entry too long/empty");
         if(!description || description.length > 65535 || description.length == 0)
             throw new Error("Description entry too long/empty");
-        if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
-            throw new Error("Invalid votes");
         if(!category || category.length > 50 || category.length == 0)
             throw new Error("Category entry too long/empty");
+
+        let parsedVotes;
+        if (votes === undefined) {
+            parsedVotes = 0;
+        } else if (isNaN(parseInt(votes))) {
+            throw new Error("Invalid votes");
+        } else {
+            parsedVotes = parseInt(votes);
+        }
 
         let results = null;
         try {
@@ -97,9 +106,10 @@ class PostService {
                     author_id: author_id,
                     title: title,
                     description: description,
-                    votes: votes,
+                    votes: parsedVotes,
                     created_at: createdAt,
-                    category: category
+                    category: category,
+                    comments_count: 0
                 }
             });
         } catch (error) {
@@ -202,6 +212,51 @@ class PostService {
         else throw new Error("Post with the given id doesn't exist");
     }
 
+    static async putCategory(
+        id,
+        category
+    ) {
+        let result = null;
+        try {
+            result = await prisma.posts.findUnique({
+                where: {
+                    id: id
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if (result != null){
+            if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
+                throw new Error("Invalid id");
+            if(!category || category.length > 50 || category.length == 0)
+                throw new Error("Description entry too long/empty");
+
+            let results = null;
+            try {
+                results = await prisma.posts.update({
+                    where: {
+                        id: id
+                    },
+                    data: {
+                        category: category
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            if (results == null) 
+                throw new Error("Post couldn't be updated");
+        }
+        else throw new Error("Post with the given id doesn't exist");
+    }
+
     static async putVotes(
         id,
         votes
@@ -222,8 +277,9 @@ class PostService {
         if (result != null){
             if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
                 throw new Error("Invalid id");
-            if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
+            if (isNaN(parseInt(votes))) {
                 throw new Error("Invalid votes");
+            }
 
             let results = null;
             try {
@@ -278,6 +334,7 @@ class PostService {
 
             if (results == null) 
                 throw new Error("Post couldn't be deleted");
+            
         }
         else throw new Error("Post with the given id doesn't exist");
         

@@ -34,15 +34,19 @@ class PostController {
         }
     }
     static async put(req, res) {
-        const { id, title, description, votes } =
+        const { id, title, description, votes, category } =
             req.body;
         try {
-            if (title !== undefined && description == undefined && votes == undefined) {
+            if (title !== undefined && description == undefined && votes == undefined && category == undefined) {
                 await postServices.putTitle(id, title);
-            } else if (description !== undefined && title == undefined && votes == undefined) {
+            } else if (description !== undefined && title == undefined && votes == undefined && category == undefined) {
                 await postServices.putDescription(id, description);
-            } else if (votes !== undefined && title == undefined && description == undefined) {
+            } else if (votes !== undefined && title == undefined && description == undefined && category == undefined) {
                 await postServices.putVotes(id, votes);
+            } else if (votes == undefined && title == undefined && description == undefined && category !== undefined) {
+                await postServices.putCategory(id, category);
+            } else {
+                throw new Error("Too many or few parameters");
             }
             res.status(200).json({ "status":"ok", "message":"post updated successfully" });
         } catch (error) {

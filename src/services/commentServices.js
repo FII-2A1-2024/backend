@@ -105,8 +105,14 @@ class commentServices {
             throw new Error("Invalid author_id");
         if(!description || description.length > 65535 || description.length == 0)
             throw new Error("Description entry too long/empty");
-        if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
+        let parsedVotes;
+        if (votes === undefined) {
+            parsedVotes = 0;
+        } else if (isNaN(parseInt(votes))) {
             throw new Error("Invalid votes");
+        } else {
+            parsedVotes = parseInt(votes);
+        }   
 
         let results = null;
         try {
@@ -116,8 +122,8 @@ class commentServices {
                     parent_id: parent_id,
                     author_id: author_id,
                     description: description,
-                    votes: votes,
-                    created_at: createdAt,
+                    votes: parsedVotes,
+                    created_at: createdAt
                 }
             });
         } catch (error) {
@@ -128,7 +134,25 @@ class commentServices {
 
         if (results == null) 
             throw new Error("Comment couldn't be created");
+        try {
+            await prisma.posts.update({
+                where: {
+                    id: post_id
+                },
+                data: {
+                    comments_count: {
+                        increment: 1
+                    }
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
     }
+
+
     static async putDescription(
         id,
         description
@@ -169,17 +193,22 @@ class commentServices {
 
             if (results == null) 
                 throw new Error("Comment couldn't be updated");
+
         }
         else throw new Error("Comment with the given id doesn't exist");
+
+
     }
+
 
     static async putVotes(
         id,
         votes
     ) {
         if(!id) throw new Error("Invalid id entry");
-        if(!votes || isNaN(parseInt(votes)) || parseInt(votes) < 0)  
+        if (isNaN(parseInt(votes))) {
             throw new Error("Invalid votes");
+        }
         
         let result = null;
         try {
@@ -215,11 +244,13 @@ class commentServices {
                 throw new Error("Comment couldn't be updated");
         }
         else throw new Error("Comment with the given id doesn't exist"); 
+
+
     }
 
     static async delete(id) {
-        if(!id) throw new Error("Invalid id entry");
-        
+        if (!id) throw new Error("Invalid id entry");
+    
         let result = null;
         try {
             result = await prisma.comments.findUnique({
@@ -229,15 +260,13 @@ class commentServices {
             });
         } catch (error) {
             throw error;
-        } finally {
-            await prisma.$disconnect();
         }
-        
-        if(result != null){
+    
+        if (result != null) {
             const queue = [id];
-            while (queue.length > 0){
+            while (queue.length > 0) {
                 const firstItem = queue.shift();
-
+    
                 let deleteResults = null;
                 try {
                     deleteResults = await prisma.comments.delete({
@@ -250,10 +279,42 @@ class commentServices {
                 } finally {
                     await prisma.$disconnect();
                 }
-
-                if (deleteResults == null) 
+    
+                if (deleteResults == null)
                     throw new Error("Comment couldn't be deleted");
-
+    
+                let postResult = null;
+                try {
+                    postResult = await prisma.posts.findUnique({
+                        where: {
+                            id: result.post_id
+                        }
+                    });
+                } catch (error) {
+                    throw error;
+                } finally {
+                    await prisma.$disconnect();
+                }
+    
+                if (postResult != null) {
+                    try {
+                        await prisma.posts.update({
+                            where: {
+                                id: result.post_id
+                            },
+                            data: {
+                                comments_count: {
+                                    decrement: 1
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                }
+    
                 let results = null;
                 try {
                     results = await prisma.comments.findMany({
@@ -266,15 +327,16 @@ class commentServices {
                 } finally {
                     await prisma.$disconnect();
                 }
-
+    
                 results.forEach((result) => {
                     queue.push(result.id);
                 });
             }
+        } else {
+            throw new Error("Comment with the given id doesn't exist")
         }
-        else throw new Error("Comment with the given id doesn't exist")
+    
     }
-
     static async deleteByPost(post_id) {
         let results = null;
         try {
@@ -294,7 +356,6 @@ class commentServices {
                 this.delete(result.id);
             });
         }
-        else throw new Error("Post with the given id doesn't exist");
     }
 }
 
