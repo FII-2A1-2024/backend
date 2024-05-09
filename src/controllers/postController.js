@@ -82,7 +82,8 @@ class PostController {
         const id = parseInt(req.query.id);
         try {
             const post = await postServices.get(id);
-            await deleteFromS3(post.url);
+            if (post.url != null)
+                await deleteFromS3(post.url);
             await postServices.delete(id);
             res.status(200).json({ "status":"ok", "message":"post deleted successfully" });
         } catch (error) {
