@@ -24,6 +24,7 @@ model Posts{
   votes Int?
   created_at DateTime? @default(now())
   category String?
+  comments_count Int?
 }
 
 model Comments{
