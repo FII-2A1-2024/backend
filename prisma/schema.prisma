@@ -25,6 +25,7 @@ model Posts{
   created_at DateTime? @default(now())
   category String?
   comments_count Int?
+  url String?
 }
 
 model Comments{

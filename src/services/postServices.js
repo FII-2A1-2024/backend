@@ -11,7 +11,7 @@ class PostService {
         try {
             result = await prisma.posts.findUnique({
                 where: {
-                    id: id
+                    id: parseInt(id)
                 }
             });
         } catch (error) {
@@ -31,7 +31,8 @@ class PostService {
                 result.votes,
                 createdAtString,
                 result.category,
-                result.comments_count
+                result.comments_count,
+                result.url
                 );
             return receivedPost;
         } else {
@@ -62,7 +63,8 @@ class PostService {
                     result.votes,
                     createdAtString,
                     result.category,
-                    result.comments_count
+                    result.comments_count,
+                    result.url
                 );
                 receivedPosts.push(receivedPost);
             });
@@ -77,7 +79,8 @@ class PostService {
         title,
         description,
         votes,
-        category
+        category,
+        url
     ) {
         const createdAt = new Date();
 
@@ -89,6 +92,8 @@ class PostService {
             throw new Error("Description entry too long/empty");
         if(!category || category.length > 50 || category.length == 0)
             throw new Error("Category entry too long/empty");
+        if(url != null && (url.length > 255 || url.length == 0))
+            throw new Error("URL entry too long/empty");
 
         let parsedVotes;
         if (votes === undefined) {
@@ -103,13 +108,14 @@ class PostService {
         try {
             results = await prisma.posts.create({
                 data: {
-                    author_id: author_id,
+                    author_id: parseInt(author_id),
                     title: title,
                     description: description,
                     votes: parsedVotes,
                     created_at: createdAt,
                     category: category,
-                    comments_count: 0
+                    comments_count: 0,
+                    url: url
                 }
             });
         } catch (error) {
@@ -130,7 +136,7 @@ class PostService {
         try {
             result = await prisma.posts.findUnique({
                 where: {
-                    id: id
+                    id: parseInt(id)
                 }
             });
         } catch (error) {
@@ -149,7 +155,7 @@ class PostService {
             try {
                 results = await prisma.posts.update({
                     where: {
-                        id: id
+                        id: parseInt(id)
                     },
                     data: {
                         title: title
@@ -175,7 +181,7 @@ class PostService {
         try {
             result = await prisma.posts.findUnique({
                 where: {
-                    id: id
+                    id: parseInt(id)
                 }
             });
         } catch (error) {
@@ -194,7 +200,7 @@ class PostService {
             try {
                 results = await prisma.posts.update({
                     where: {
-                        id: id
+                        id: parseInt(id)
                     },
                     data: {
                         description: description
@@ -220,7 +226,7 @@ class PostService {
         try {
             result = await prisma.posts.findUnique({
                 where: {
-                    id: id
+                    id: parseInt(id)
                 }
             });
         } catch (error) {
@@ -239,7 +245,7 @@ class PostService {
             try {
                 results = await prisma.posts.update({
                     where: {
-                        id: id
+                        id: parseInt(id)
                     },
                     data: {
                         category: category
@@ -265,7 +271,7 @@ class PostService {
         try {
             result = await prisma.posts.findUnique({
                 where: {
-                    id: id
+                    id: parseInt(id)
                 }
             });
         } catch (error) {
@@ -285,10 +291,55 @@ class PostService {
             try {
                 results = await prisma.posts.update({
                     where: {
-                        id: id
+                        id: parseInt(id)
                     },
                     data: {
-                        votes: votes
+                        votes: parseInt(votes)
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            if (results == null) 
+                throw new Error("Post couldn't be updated");
+        }
+        else throw new Error("Post with the given id doesn't exist");
+    }
+
+    static async putUrl(
+        id,
+        url
+    ) {
+        let result = null;
+        try {
+            result = await prisma.posts.findUnique({
+                where: {
+                    id: parseInt(id)
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if (result != null){
+            if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
+                throw new Error("Invalid id");
+            if(!url || url.length > 255 || url.length == 0)
+                throw new Error("URL entry too long/empty");
+
+            let results = null;
+            try {
+                results = await prisma.posts.update({
+                    where: {
+                        id: parseInt(id)
+                    },
+                    data: {
+                        url: url
                     }
                 });
             } catch (error) {
@@ -309,7 +360,7 @@ class PostService {
         try {
             result = await prisma.posts.findUnique({
                 where: {
-                    id: id
+                    id: parseInt(id)
                 }
             });
         } catch (error) {
@@ -323,7 +374,7 @@ class PostService {
             try {
                 results = await prisma.posts.delete({
                     where: {
-                        id: id
+                        id: parseInt(id)
                     }
                 });
             } catch (error) {
