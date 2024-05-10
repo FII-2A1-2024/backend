@@ -45,6 +45,35 @@ class UserService {
         return UserService.getIdByEmailLogic(email)
     }
 
+    async logUserIn(user) {
+        return UserService.addUserInLoggedUsers(user)
+    }
+
+    async changePassword(email, password) {
+        return UserService.changePasswordByEmail(email, password)
+    }
+
+    static async changePasswordByEmail(email, password) {
+        try {
+            await prisma.user.update({
+                where: { emailPrimary: email },
+                data: { password: password },
+            });
+            console.log("Password succesfully changed");
+            return {
+                resCode: HttpCodes.SUCCESS,
+                message: "Password succesfully changed"
+            };
+
+        } catch (error) {
+            console.error("Error changing password:", error);
+            return {
+                resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+                message: "Error ocured at changing password in database"
+            };
+        }
+    }
+
     static async getIdByEmailLogic(email) {
         try {
             const user = await prisma.user.findUnique({
@@ -79,6 +108,23 @@ class UserService {
             console.log("Added user " + instance.emailPrimary);
         } catch (error) {
             console.error("Error inserting user -> " + error);
+        }
+    }
+
+    static async addUserInLoggedUsers(user) {
+        try {
+
+            const instance = await prisma.loggedUsers.create({
+                data: {
+                    uid: user.uid,
+                    username: user.username,
+                    port: user.port
+                }
+            });
+
+            console.log(`Added user ${instance.emailPrimary}`);
+        } catch (error) {
+            console.error(`Error inserting user -> ${error}`);
         }
     }
 
