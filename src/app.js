@@ -1,7 +1,7 @@
 
 const express = require("express");
 const app = express();
-const resetPasswordRoutes = require("./routes/resetPassword");
+const resetPasswordRoutes = require("./routes/resetPasswordRoutes");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const postFollowRoutes = require("./routes/postFollowRoutes");
@@ -11,8 +11,8 @@ const isUser = require("./utils/Middleware/isUser");
 
 const cors = require('cors')
 const signUpRoutes = require('./routes/signUp')
-const loginRoutes = require("./routes/login");
-const optionsRoutes = require('./routes/options')
+const loginRoutes = require("./routes/loginRoutes"); 3
+const optionsRoutes = require('./routes/optionsRoutes')
 
 app.use(cors())
 

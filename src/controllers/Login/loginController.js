@@ -33,6 +33,13 @@ async function login(req, res) {
 		if (!errorAppeared) {
 			const token = tokenGeneration.generateAccessToken(email);
 			const uid = await userServices.getIdByEmail(email);
+
+			const user = {
+				uid: uid,
+				username: "deocamdata username random nu e implementat",
+				port: req.connection.remotePort.toString() // e asta metoda portivita pentru a obtine porturile?
+			}
+			userServices.logUserIn(user);
 			res.send({
 				resCode: code,
 				token: token,

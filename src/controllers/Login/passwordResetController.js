@@ -1,10 +1,11 @@
-const jwt = require("jsonwebtoken");
-const resetTokenServices = require("../../utils/JWT/resetToken");
-const HttpCodes = require("../../config/returnCodes");
 const passwordHashHandler = require('../../utils/generateHash')
+const HttpCodes = require("../../config/returnCodes");
+const userServices = require("../../services/userServices");
+const PasswordResetService = require("../../services/passwordResetService")
 
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const sendEmail = require("../../utils/sendEmail").sendCustomEmail;
+const resetTokenServices = require("../../utils/JWT/JWTGeneration");
+
 
 /**
  * 	The function below expects a query token from wich it
@@ -13,40 +14,26 @@ const prisma = new PrismaClient();
  * 	If not it will request a password to be replaced in the database
  */
 
-async function changePassword(req, res) {
-	const token = req.query.token;
-
+async function change(req, res) {
 	try {
-		const decoded = jwt.verify(token, resetTokenServices.privateKey);
-		const currTime = Date.now();
-		const tokenStamp = decoded.timestamp;
-		const maxVerifyTime = 5 * 60 * 1000; //5 min in milisecunde
-		if (currTime - tokenStamp > maxVerifyTime) {
-			res.send({
-				resCode: HttpCodes.TOKEN_EXPIRED,
-				message: "Reset token expired"
-			});
-			return;
-		}
-		if (req.body.password === undefined) {
-			res.send({
-				resCode: HttpCodes.BAD_REQUEST,
-				message: "This method expects a json of type {password : <password>}"
-			});
+		const token = req.query.token;
+		let response = await PasswordResetService.validateToken(token);
+		if (response.resCode !== HttpCodes.SUCCESS) {
+			res.send(response);
 			return;
 		}
 
-		const email = decoded.email;
+		response = await PasswordResetService.validatePassword(req.body.password)
+		if (response.resCode !== HttpCodes.SUCCESS) {
+			res.send(response);
+			return;
+		}
+
+		const email = await PasswordResetService.retriveEmail(token)
 		const hashedPassword = passwordHashHandler(req.body.password);
-		await prisma.user.update({
-			where: { emailPrimary: email },
-			data: { password: hashedPassword },
-		});
+		response = await userServices.changePassword(email, hashedPassword)
+		res.send(response);
 
-		res.send({
-			resCode: HttpCodes.SUCCESS,
-			message: "Your password has been succesfully changed"
-		});
 	} catch (error) {
 		console.error("Error verifying token: ", error);
 		res.send({
@@ -56,4 +43,32 @@ async function changePassword(req, res) {
 	}
 }
 
-module.exports = changePassword;
+/**
+ * 	The function below espects an email
+ * 	If the email is found in the database then it sends a link on that email
+ * 	with an URL for pasword changing
+ */
+
+async function requestChange(req, res) {
+	const email = req.body.email;
+
+	const response = await PasswordResetService.validateEmail(email); console.log(1); console.log(response)
+	if (response.resCode !== HttpCodes.SUCCESS) {
+		res.send(response);
+		return;
+	}
+
+	const resetToken = resetTokenServices.generateResetToken(email);
+	const resetLink = `http://${process.env.SERVER_IP}:${process.env.SERVER_PORT}/resetPass/verify?token=${resetToken}`;
+	console.log(resetLink);
+	sendEmail(email, "Password Reset", resetLink);
+	res.send({
+		resCode: HttpCodes.SUCCESS,
+		message: "The email was succesfuly sent"
+	});
+}
+
+module.exports = {
+	changePassword: change,
+	requestChange: requestChange
+};

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const passwordResetRequest = require("../controllers/Login/passwordResetRequest");
-const passwordResetController = require("../controllers/Login/passwordResetController");
+const passwordController = require("../controllers/Login/passwordResetController");
 
 /**
  * 	The resetPassword/ post endpoint expects a json of type:
@@ -17,14 +16,14 @@ router
 	.get("/", (req, res) => {
 		res.send({ data: "Password change request stage" });
 	})
-	.post("/resetPass", (req, res) => {
-		resetPasswordController(req, res);
+	.post("/resetPass/", (req, res) => {
+		passwordController.requestChange(req, res);
 	})
 	.get("/resetPass/verify", (req, res) => {
 		res.send({ data: "insert new password" });
 	})
 	.post("/resetPass/verify", (req, res) => {
-		changePasswordController(req, res);
+		passwordController.changePassword(req, res);
 	});
 
 module.exports = router;
