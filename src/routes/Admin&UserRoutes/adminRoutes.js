@@ -13,7 +13,7 @@ router.patch("/admin/promoteToTeacher", authenticateToken, isAdmin, adminControl
 router.delete("/admin/teachers/deleteTeacher", authenticateToken, isAdmin, adminController.deleteTeacher)
 router.post("/admin/teachers/addSecondSubject", authenticateToken, isAdmin, adminController.addSubjectToTeacher)
 
-router.get("/admin/reviewReport", authenticateToken,isAdmin, adminController.reviewReport);
+router.get("/admin/viewReports", authenticateToken,isAdmin, adminController.viewReports);
 
 router.post("/admin/sendWarning", authenticateToken,isAdmin, adminController.sendWarning);
 

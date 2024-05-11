@@ -69,12 +69,14 @@ class AdminController {
         }
     }
 
-    static async reviewReport(req, res) {
+    static async viewReports(req, res) {
         try {
-            res.status(200).send("success");
+            const allReports = await adminServices.viewReports(); 
+            res.json(allReports); 
         } catch (error) {
-            res.status(500).send("Error occured: " + error);
-        }
+            console.error('Eroare la preluarea datelor:', error);
+            res.status(500).send("Error occured: " + error); 
+         }
     }
     static async sendWarning(req, res) {
         try {

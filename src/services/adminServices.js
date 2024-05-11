@@ -30,8 +30,8 @@ class AdminService {
     static async deleteTeacher(myself, email){
         return AdminService.deleteProf(myself, email)
     }
-    static async reviewReport() {
-        return 0;
+    static async viewReports() {
+        return AdminService.viewAllReports();
     }
     static async sendWarning(id) {
         return 0;
@@ -39,6 +39,22 @@ class AdminService {
     static async deletePost(id) {
         return 0;
     }
+
+    static async viewAllReports() {
+        try {
+            const allReports = await prisma.report.findMany();
+            //afisam fiecare report din db 
+            allReports.forEach(report => {
+                console.log(`ID: ${report.report_id}, Reporter Email: ${report.reporter_email}, Reported Email: ${report.reported_email}, Reason: ${report.reason}`);
+            });
+            return allReports;
+        } catch (error) {
+            console.error('Eroare la preluarea datelor:', error);
+            throw error;
+        } 
+    }
+    
+
 
     static async promoteUserToAdmin(myself, email, level){
         let code = 200
