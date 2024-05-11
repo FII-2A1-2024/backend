@@ -20,6 +20,9 @@ class AdminService {
     static async timeoutUser(email) {
         return 0;
     }
+    static async reviewReport(report_id,wantedState) {
+        return AdminService.reviewReportByID(report_id,wantedState);
+    }
     static async promoteUser(me, email, level) {
         return AdminService.promoteUserToAdmin(me, email, level);
     }
@@ -35,14 +38,43 @@ class AdminService {
     static async deletePost(id) {
         return 0;
     }
+    
+
+    static async reviewReportByID(report_id,wantedState) {
+        try {
+            //cauta in tabela linia cu report_id si inlocuieste state cu wanted state
+            //se presupune ca ajung emailuri corecte aici
+            const existingReport = await prisma.report.findUnique({
+                where: { report_id: report_id }
+            });
+    
+            if (!existingReport) {
+                throw new Error(`Report with ID ${report_id} doesn't exist.`);
+            }
+            //returneaza un mesaj de confirmare
+            const updatedReport = await prisma.report.update({
+                where: { report_id: report_id },
+                data: { state: wantedState }
+            });
+            console.log(updatedReport);
+            const message = `State of report with ID ${report_id} is now ${wantedState}.`;
+            
+            return message;
+        } catch (error) {
+            console.error('Eroare la preluarea datelor:', error);
+            throw error;
+        } 
+    }
+    
 
     static async viewAllReports() {
         try {
             const allReports = await prisma.report.findMany();
             //afisam fiecare report din db 
             allReports.forEach(report => {
-                console.log(`ID: ${report.report_id}, Reporter Email: ${report.reporter_email}, Reported Email: ${report.reported_email}, Reason: ${report.reason}`);
+                console.log(`ID: ${report.report_id}, Reporter Email: ${report.reporter_email}, Reported Email: ${report.reported_email}, Reason: ${report.reason}, State: ${report.state}`);
             });
+            
             return allReports;
         } catch (error) {
             console.error('Eroare la preluarea datelor:', error);

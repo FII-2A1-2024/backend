@@ -13,6 +13,9 @@ router.patch("/admin/promoteToTeacher", authenticateToken, isAdmin, adminControl
 
 router.get("/admin/viewReports", authenticateToken,isAdmin, adminController.viewReports);
 
+router.patch("/admin/viewReports/evaluateReport",authenticateToken,isAdmin, adminController.evaluateReport);
+//primeste report_id si o evaluare a unui admin si modifica in db state-ul pt report 
+
 router.post("/admin/sendWarning", authenticateToken,isAdmin, adminController.sendWarning);
 
 router.delete("/admin/deletePost", authenticateToken,isAdmin, adminController.deletePost);
