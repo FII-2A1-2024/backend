@@ -20,5 +20,4 @@ router
         res.send({ data: "No data yet" }).status(200)
         console.log("Am primit req");
     })
-
 module.exports = router

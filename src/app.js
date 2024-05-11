@@ -12,7 +12,7 @@ const isUser = require("./utils/Middleware/isUser");
 const cors = require('cors')
 const signUpRoutes = require('./routes/signUp')
 const loginRoutes = require("./routes/login");
-const optionsRoutes = require('./routes/options')
+const optionsRoutes = require('./routes/optionsRoutes')
 const logoutRoutes = require('./routes/logoutRoutes');
 
 
