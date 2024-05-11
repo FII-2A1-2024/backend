@@ -90,6 +90,19 @@ class PostController {
             res.status(500).json({ "status":"err", "message": error.message });
         }
     }
+    static async deleteFile(req, res) {
+        const id = parseInt(req.query.id);
+        try {
+            const post = await postServices.get(id);
+            if (post.url != null) {
+                await deleteFromS3(post.url);
+                await postServices.deleteFile(id);
+            }
+            res.status(200).json({ "status":"ok", "message":"post file deleted successfully" });
+        } catch (error) {
+            res.status(500).json({ "status":"err", "message": error.message });
+        }
+    }
 }
 
 module.exports = PostController;
