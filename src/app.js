@@ -14,6 +14,8 @@ const signUpRoutes = require('./routes/signUp')
 const loginRoutes = require("./routes/login");
 const optionsRoutes = require('./routes/optionsRoutes')
 const logoutRoutes = require('./routes/logoutRoutes');
+const deleteAccountRoutes = require('./routes/deleteAccountRoutes')
+
 
 
 app.use(cors());
@@ -28,6 +30,8 @@ app
     .use(optionsRoutes)
     .use(postFollowRoutes)
     .use(adminRoutes)
-    .use(logoutRoutes);
+    .use(logoutRoutes)
+    //de invalidat jwt-ul
+    .use(deleteAccountRoutes);
 module.exports = app;
 
