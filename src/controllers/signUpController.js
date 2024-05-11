@@ -18,13 +18,9 @@ async function signUp(req, res){
             console.log("Nu introducem userul in baza de date, are email gresit");
             message = "Invalid email format! Example of accepted syntax: example.example@student.uaic.ro"
         } else{
-<<<<<<< HEAD
             result = (await signUpService.createUser(username, password)) 
             code = result.code
             message = result.message
-=======
-            code = await signUpService.createUser(username, password)
->>>>>>> cd356f5d33032043b991796edfba5b7fa897693f
         }
         res.send({resCode: code, message: message})
     } catch (error){

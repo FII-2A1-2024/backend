@@ -4,13 +4,17 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../../controllers/adminController");
 //permissions admin
+
 router.patch("/admin/timeoutUser", authenticateToken, isAdmin, adminController.timeoutUser); 
 
-router. patch("/admin/promoteUser",authenticateToken,isAdmin,adminController.promoteUser);
+router.patch("/admin/promoteToAdmin",authenticateToken, isAdmin, adminController.promoteToAdmin);
 
-router. get("/admin/reviewReport",authenticateToken,isAdmin,adminController.reviewReport);
+router.patch("/admin/promoteToTeacher", authenticateToken, isAdmin, adminController.promoteToTeacher)
 
-router. post("/admin/sendWarning",authenticateToken,isAdmin,adminController.sendWarning);
-router. delete("/admin/deletePost",authenticateToken,isAdmin,adminController.deletePost);
+router.get("/admin/reviewReport", authenticateToken,isAdmin, adminController.reviewReport);
+
+router.post("/admin/sendWarning", authenticateToken,isAdmin, adminController.sendWarning);
+
+router.delete("/admin/deletePost", authenticateToken,isAdmin, adminController.deletePost);
 
 module.exports= router;

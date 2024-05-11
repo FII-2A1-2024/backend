@@ -1,3 +1,4 @@
+const { log } = require("console");
 const adminServices = require("../services/adminServices");
 
 
@@ -9,13 +10,33 @@ class AdminController {
             res.status(500).send("Error occured: " + error);
         }
     }
-    static async promoteUser(req, res) {
+
+    static async promoteToAdmin(req, res) {
         try {
-            res.status(200).send("success");
+            //whats my level? can i promote somebody with a higher level than me?
+            const me = req.user.user
+            const {email: user, motive, level} = req.body
+            console.log(`${me} is trying to promote user ${user} to admin of level ${level}, with motive: ${motive}`);
+
+            let result = (await adminServices.promoteUser(me, user, level))
+            const resCode = result.code
+            const message = result.message
+            res.status(resCode).send(message);
         } catch (error) {
             res.status(500).send("Error occured: " + error);
         }
     }
+
+    static async promoteToTeacher(req, res){
+        try{
+            const user = req.email
+            const motive = req.motive
+            let result = (await adminServices.promoteTeacher(user))
+        } catch(error){
+            res.status(500).send("Error occured: " + error)
+        }
+    }
+
     static async reviewReport(req, res) {
         try {
             res.status(200).send("success");
