@@ -24,6 +24,8 @@ model Posts{
   votes Int?
   created_at DateTime? @default(now())
   category String?
+  comments_count Int?
+  url String?
 }
 
 model Comments{
@@ -40,4 +42,10 @@ model PostsFollow{
   user_id Int
   post_id Int
   @@unique([user_id, post_id])
+}
+
+model Admin {
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  level   Int      @default(1)
 }

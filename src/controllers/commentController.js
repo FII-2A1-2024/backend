@@ -41,6 +41,8 @@ class CommentController {
                 await commentServices.putDescription(id, description);
             } else if (votes !== undefined && description == undefined) {
                 await commentServices.putVotes(id, votes);
+            } else {
+                throw new Error("Too many or few parameters");
             }
             res.status(200).json({ "status":"ok", "message":"Comment updated in db"});
         } catch (error) {
