@@ -72,11 +72,24 @@ class AdminController {
     static async viewReports(req, res) {
         try {
             const allReports = await adminServices.viewReports(); 
-            res.json(allReports); 
+            res.status(200).json(allReports); 
         } catch (error) {
-            console.error('Eroare la preluarea datelor:', error);
-            res.status(500).send("Error occured: " + error); 
+            //console.error('Eroare la preluarea datelor:', error);
+            res.status(500).send("Error occured at viewing reports: " + error); 
          }
+    }
+    static async evaluateReport(req, res) {
+        try {
+            if (!req.body.report_id || !req.body.state) {
+                return res.status(400).send("report_id and state fields are missing from the body of the req");
+            }
+            const report_id=req.body.report_id;
+            const wantedState=req.body.state;
+            const confirmationOfReview = await adminServices.reviewReport(report_id,wantedState); 
+            res.status(200).json(confirmationOfReview);
+        } catch (error) {
+            res.status(500).send("Error occured at evaluating report: " + error);
+        }
     }
     static async sendWarning(req, res) {
         try {
@@ -85,6 +98,7 @@ class AdminController {
             res.status(500).send("Error occured: " + error);
         }
     }
+    
     static async deletePost(req, res) {
         try {
             res.status(200).send("success");
