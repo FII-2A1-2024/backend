@@ -128,12 +128,12 @@ class UserService {
 
 	static async addUserInLoggedUsers(user) {
 		try {
-			const instance = await prisma.loggedUsers.create({
+			const instance = await prisma.LoggedUsers.create({
 				data: {
 					uid: user.uid,
 					username: user.username,
-					socket: user.port,
-				},
+					socket: user.socket
+				}
 			});
 			console.log(`Added user ${instance.emailPrimary}`);
 			return {

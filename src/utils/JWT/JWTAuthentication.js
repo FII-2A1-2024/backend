@@ -11,13 +11,13 @@ function authenticateToken(req, res, next) {
     
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'Unauthorized: Access token is missing' });
-//console.log(token);
+    const decodedToken = jwt.decode(token);
+    const username = decodedToken.user;
     jwt.verify(token, jwtSecret, (err, user) => {
-        if (jwtBlackListHandler.isTokenBlacklisted(token)) {
+        if (jwtBlackListHandler.isTokenBlacklisted(username)) {
             return res.status(403).json({ error: 'Forbidden: Invalid access token' });
         }
         if (err) {
-           
             if (err.name === 'JsonWebTokenError' ) {
                 console.log(err);
                 return res.status(403).json({ error: 'Forbidden: Invalid access token' });
