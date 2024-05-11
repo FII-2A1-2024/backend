@@ -10,9 +10,11 @@ function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
 
     const token = authHeader && authHeader.split(' ')[1];
+
     if (!token) return res.status(401).json({ error: 'Unauthorized: Access token is missing' });
     const decodedToken = jwt.decode(token);
     const username = decodedToken.user;
+
     jwt.verify(token, jwtSecret, (err, user) => {
         if (jwtBlackListHandler.isTokenBlacklisted(username)) {
             return res.status(403).json({ error: 'Forbidden: Invalid access token' });
