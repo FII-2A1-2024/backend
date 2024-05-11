@@ -49,3 +49,10 @@ model Admin {
   email   String   @unique
   level   Int      @default(1)
 }
+
+model Report {
+  report_id    Int     @id @default(autoincrement())
+  reporter_email  String  @db.VarChar(50)
+  reported_email  String  @db.VarChar(50)
+  reason       String  @db.VarChar(255)
+}

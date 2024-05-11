@@ -11,7 +11,7 @@ router.patch("/admin/promoteToAdmin",authenticateToken, isAdmin, adminController
 
 router.patch("/admin/promoteToTeacher", authenticateToken, isAdmin, adminController.promoteToTeacher)
 
-router.get("/admin/reviewReport", authenticateToken,isAdmin, adminController.reviewReport);
+router.get("/admin/viewReports", authenticateToken,isAdmin, adminController.viewReports);
 
 router.post("/admin/sendWarning", authenticateToken,isAdmin, adminController.sendWarning);
 
