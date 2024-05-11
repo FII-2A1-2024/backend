@@ -13,10 +13,12 @@ dotenv.config({ path: envPath });
 async function createUser(username, password){
     const newUser = {username: username, password: password}
     let code = 0
+    let message = "All done! Proceed verifying your email in order to be able to log in!"
     return UserService.existsInDB(username).then(result => {
         if(result == 1){
             console.log("Exista deja in BD");
             code = HttpCodes.USER_ALREADY_EXISTS
+            message = "An account with this username already exists!"
         }
         else{
             code = HttpCodes.SUCCESS
@@ -29,10 +31,10 @@ async function createUser(username, password){
         }
         return Promise.resolve(code)
     }).then(() => {
-        return code;
+        return {code: code, message: message};
     }).catch(error => {
         console.error("Error:", error)
-        return HttpCodes.USER_ALREADY_EXISTS;
+        return {code: HttpCodes.BAD_REQUEST, message: message};
     })
    
 }
