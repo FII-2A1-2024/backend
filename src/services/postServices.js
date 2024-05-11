@@ -391,6 +391,47 @@ class PostService {
         
         commentServices.deleteByPost(id);
     }
+
+    static async deleteFile (id)
+    {
+        let result = null;
+        try {
+            result = await prisma.posts.findUnique({
+                where: {
+                    id: parseInt(id)
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if (result != null){
+            if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
+                throw new Error("Invalid id");
+
+            let results = null;
+            try {
+                results = await prisma.posts.update({
+                    where: {
+                        id: parseInt(id)
+                    },
+                    data: {
+                        url: null
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            if (results == null) 
+                throw new Error("Post file couldn't be set to null");
+        }
+        else throw new Error("Post with the given id doesn't exist");
+    }
 }
 
 module.exports = PostService;
