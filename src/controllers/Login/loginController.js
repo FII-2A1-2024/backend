@@ -20,6 +20,7 @@ async function login(req, res) {
 	try {
 		const { email, password, socket } = req.body;
 		let code = HttpCodes.SUCCESS;
+
 		if (email === undefined || password === undefined || socket === undefined) {
 			handleErrorCodes(res, HttpCodes.BAD_REQUEST);
 			return;
