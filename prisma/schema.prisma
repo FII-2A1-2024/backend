@@ -20,7 +20,7 @@ model LoggedUsers {
   luid     Int    @id @default(autoincrement())
   uid      Int    
   username String
-  port     String
+  socket     String
 }
 
 
