@@ -16,6 +16,14 @@ model User{
   verifiedEmail Int
 }
 
+model LoggedUsers {
+  luid     Int    @id @default(autoincrement())
+  uid      Int    
+  username String
+  socket     String
+}
+
+
 model Posts{
   id Int @id @default(autoincrement())
   author_id Int
