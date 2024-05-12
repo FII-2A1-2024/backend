@@ -29,11 +29,43 @@ class AdminController {
 
     static async promoteToTeacher(req, res){
         try{
-            const user = req.email
-            const motive = req.motive
-            let result = (await adminServices.promoteTeacher(user))
+            const me = req.user.user
+            const user = req.body.email
+            const firstSubject = req.body.firstSubject
+            let result;
+
+            result = await adminServices.promoteTeacher(me, user, firstSubject)            
+            
+            res.status(result.code).send(result.message)
         } catch(error){
             res.status(500).send("Error occured: " + error)
+        }
+    }
+
+    static async addSubjectToTeacher(req, res){
+        try{
+            const me = req.user.user
+            const user = req.body.email
+            const secondSubject = req.body.secondSubject
+            let result;
+
+            result = await adminServices.addSubjectToTeacher(me, user, secondSubject)
+            res.status(result.code).send(result.message)
+        } catch(error){
+            res.status(500).send("Error occured: " + error)
+        }
+    }
+
+    static async deleteTeacher(req, res){
+        try{
+            const me = req.user.user
+            const user = req.body.email
+            let result;
+
+            result = await adminServices.deleteTeacher(me, user)
+            res.status(result.code).send(result.message)
+        } catch(error){
+            res.status(500).send("Error occured: " + error  )
         }
     }
 

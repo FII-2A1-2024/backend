@@ -10,6 +10,8 @@ router.patch("/admin/timeoutUser", authenticateToken, isAdmin, adminController.t
 router.patch("/admin/promoteToAdmin",authenticateToken, isAdmin, adminController.promoteToAdmin);
 
 router.patch("/admin/promoteToTeacher", authenticateToken, isAdmin, adminController.promoteToTeacher)
+router.delete("/admin/teachers/deleteTeacher", authenticateToken, isAdmin, adminController.deleteTeacher)
+router.post("/admin/teachers/addSecondSubject", authenticateToken, isAdmin, adminController.addSubjectToTeacher)
 
 router.get("/admin/reviewReport", authenticateToken,isAdmin, adminController.reviewReport);
 

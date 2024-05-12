@@ -43,6 +43,33 @@ class UserService {
 		return UserService.getIdByEmailLogic(email);
 	}
 
+    async isTeacher(email){
+        return UserService.verifyTeacher(email)
+    }
+
+    async makeTeacher(email){
+        return UserService.makeProf(email)
+    }
+
+    static async insert(newUser){
+        try{
+            const hashedPassword = generateHash(newUser.password);
+            const instance = await prisma.user.create({
+                data: {
+                    emailPrimary: newUser.username,
+                    password: hashedPassword,
+                    emailSecondary : "null",
+                    profesorFlag : 0,
+                    verifiedEmail : 0
+                }
+            });
+
+            console.log("Added user " + instance.emailPrimary);
+        } catch(error){
+            console.error("Error inserting user -> " + error);
+        }
+    }
+
 	async logUserIn(user) {
 		return UserService.addUserInLoggedUsers(user);
 	}
@@ -306,6 +333,38 @@ class UserService {
 			};
 		}
 	}
+
+    static async verifyTeacher(email){
+        try {
+            const user = await prisma.user.findFirst({
+                where: {
+                    emailPrimary: email,
+                    profesorFlag: 1
+                }
+            });
+            return user ? true : false;
+        } catch (error) {
+            console.log("Error searching teacher: " + error);
+            return false;
+        }   
+    }
+
+    static async makeProf(email){
+        try {
+            await prisma.user.update({
+                where: {
+                    emailPrimary: email
+                },
+                data: {
+                    profesorFlag: 1
+                }
+            });
+            return true;
+        } catch (error) {
+            console.log("Error making user a professor: " + error);
+            return false;
+        }   
+    }
 }
 
 module.exports = new UserService();
