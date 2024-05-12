@@ -1,4 +1,3 @@
-
 //Aceasta functie creeaza si manipuleaza un hash map in care se vor stoca
 //JWT-urile userilor dupa emailul lor(key)
 //Va restrictiona accesul userilor,in functie de context,la anumite endpoint-uri
@@ -16,7 +15,7 @@ function createTokenBlacklist() {
     function isTokenBlacklisted(email) {
         return tokenBlacklist.has(email);
     }
-    
+
     function getToken(email) {
         return tokenBlacklist.get(email);
     }
