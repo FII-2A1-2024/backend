@@ -6,10 +6,7 @@ const optionsController = require('../controllers/optionsController');
 const accountDeletionController = require('../controllers/accountDeletionController');
 
 router
-    .get("/", (req, res) => {
-        res.send({ data: "No data yet" });
-    })
-    .get("/deleteAccount", authenticateToken, optionsController.sendDeletionMail)
+    .get("/deleteAccount", authenticateToken,optionsController.sendDeletionMail)
     .get("/deleteAccount/verify", accountDeletionController.deleteAccount);
 
 module.exports = router;
