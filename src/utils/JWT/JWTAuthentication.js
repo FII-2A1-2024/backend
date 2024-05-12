@@ -8,7 +8,7 @@ const jwtBlackListHandler = require('./tokenBlackList')
 //Un endpoint va fi specific pt admin,altul pentru client obisnuit.
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    
+
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'Unauthorized: Access token is missing' });
     const decodedToken = jwt.decode(token);
@@ -24,12 +24,10 @@ function authenticateToken(req, res, next) {
             }
             return next(err); // Pass other errors to the global error handler
         }
-        req.user=user;
-        
+        req.user = user;
+
         next();
     });
 }
-
-
 
 module.exports = authenticateToken;
