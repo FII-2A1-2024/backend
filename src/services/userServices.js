@@ -41,6 +41,16 @@ class UserService{
         return UserService.checkSecondEmail(email)
     }
 
+    async isTeacher(email){
+        return UserService.verifyTeacher(email)
+    }
+
+    async makeTeacher(email){
+        return UserService.makeProf(email)
+    }
+
+
+
     static async insert(newUser){
         try{
             const hashedPassword = generateHash(newUser.password);
@@ -153,6 +163,38 @@ class UserService{
         } catch(error){
             console.log("Error checking secondary email: " + error);
         }
+    }
+
+    static async verifyTeacher(email){
+        try {
+            const user = await prisma.user.findFirst({
+                where: {
+                    emailPrimary: email,
+                    profesorFlag: 1
+                }
+            });
+            return user ? true : false;
+        } catch (error) {
+            console.log("Error searching teacher: " + error);
+            return false;
+        }   
+    }
+
+    static async makeProf(email){
+        try {
+            await prisma.user.update({
+                where: {
+                    emailPrimary: email
+                },
+                data: {
+                    profesorFlag: 1
+                }
+            });
+            return true;
+        } catch (error) {
+            console.log("Error making user a professor: " + error);
+            return false;
+        }   
     }
 }
 

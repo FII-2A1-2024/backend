@@ -1,7 +1,4 @@
 
-const express = require("express");
-const router = express.Router();
-
 const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient()
 const HttpCodes = require('../config/returnCodes')
@@ -11,7 +8,8 @@ const dotenv = require("dotenv");
 const envPath = path.resolve(__dirname, "../config", ".env.local");
 dotenv.config({ path: envPath });
 
-const UserService = require('../services/userServices')
+const UserService = require('../services/userServices');
+const TeacherService = require('../services/teacherServices')
 
 class AdminService {
 
@@ -23,8 +21,14 @@ class AdminService {
     static async promoteUser(me, email, level) {
         return AdminService.promoteUserToAdmin(me, email, level);
     }
-    static async promoteTeacher(email){
-        return 0;
+    static async promoteTeacher(myself, email, firstSubject){
+        return AdminService.promoteUserToTeacher(myself, email, firstSubject);
+    }
+    static async addSubjectToTeacher(myself, email, secondSubject){
+        return AdminService.addSubject(myself, email, secondSubject)
+    }
+    static async deleteTeacher(myself, email){
+        return AdminService.deleteProf(myself, email)
     }
     static async reviewReport() {
         return 0;
@@ -89,6 +93,117 @@ class AdminService {
         return {code, message}
     }
 
+    static async promoteUserToTeacher(myself, email, firstSubject){
+        let code = 200
+        let message = "Everything went well!"
+        //! edge cases(EG):
+        //1 exista user-ul si e verificat
+        //2 nu se promoveaza singur ca profesor
+        //3 are level-ul necesar(sa zicem ca doar cu level 1/2 pot adauga profesori...)
+        //4 e deja teacher
+        //5 e admin
+
+        //TODO EG1
+        const res = await UserService.existsInDB(email)
+        const res2 = await UserService.isVerifed(email)
+        if(!res || !res2){
+            code = HttpCodes.USER_DOESNOT_EXIST
+            message = "The user you are trying to promote as a teacher doesn't exist or isn't verified!"
+        }
+
+        //TODO EG2
+        if(myself == email){
+            code = HttpCodes.INVALID_REQUEST
+            message = "Sadly, you can't name yourself as a teacher..."
+        }
+
+        //TODO EG3
+        const adminLevel = await AdminService.getLevel(myself)
+        if(![1,2].includes(adminLevel)){
+            code = HttpCodes.NO_PRIVILEGE
+            message = "You don't have the necessary privileges to make this action..."
+        }
+
+        //TODO EG4
+        const res3 = await UserService.isTeacher(email)
+        if(res3){
+            code = HttpCodes.ALREADY_VERIFIED
+            message = "This user is already a teacher!"
+        }
+
+        //TODO EG5
+        const res4 = await AdminService.existsAdmin(email)
+        if(res4){
+            code = HttpCodes.BAD_REQUEST
+            message = "An admin can't be a teacher..."
+        }
+
+        //totul e ok, modifica in db
+        if(code == 200){
+            //1 adauga user ca teacher in tabela User(profesorFlag -> 1)
+            UserService.makeTeacher(email)
+            //2 adauga teacher in tabela Teacher, cu tot cu secondSubject
+            await TeacherService.addTeacher(email, firstSubject)
+        }
+        return {code, message}
+    }
+
+    static async addSubject(myself, email, secondSubject){
+        let code = 200
+        let message = "Everything went well"
+
+        //! edge cases(EG):
+        //1 teacher exists
+        //2 second subject is different from the first one
+
+
+        //TODO EG1
+        const res = await UserService.isTeacher(email)
+        if(!res){
+            code = HttpCodes.BAD_REQUEST
+            message = "No teacher with this username was found..."
+        }
+
+        //TODO EG2
+        const firstSubject = await TeacherService.getFirstSubject(email)
+        if(firstSubject == secondSubject){
+            code = HttpCodes.BAD_REQUEST
+            message = "Second subject can't be the same as the first one..."
+        }
+
+        if(code == 200){
+            await TeacherService.addSecondSubject(email, secondSubject)
+        }
+        return {code, message}
+    }
+
+    static async deleteProf(myself, email){
+        let code = 200
+        let message = "Everything went well"
+        //! edge cases(EG):
+        //1 prof doesnt exist
+        //2 admin doesnt have level 1
+
+        //TODO EG1
+        const res = await UserService.isTeacher(email)
+        if(!res){
+            code = HttpCodes.BAD_REQUEST
+            message = "No teacher with this username was found..."
+        }
+
+        //TODO EG2
+        const adminLevel = await AdminService.getLevel(myself)
+        if(adminLevel != 1){
+            code = HttpCodes.NO_PRIVILEGE
+            message = "You don't have the necessary privileges to make this action..."
+        }
+
+        if(code == 200){
+            //delete prof from the db
+            await TeacherService.deleteTeacher(email)
+        }
+        return {code, message}
+    }
 
     //helper functions, that will most likely not be triggered outside of here
     static async getLevel(username){
@@ -136,6 +251,20 @@ class AdminService {
             console.log('Admin upserted successfully.');
         } catch (error) {
             console.error('Error upserting admin:', error);
+        }
+    }
+
+    static async existsAdmin(username){
+        try {
+            const admin = await prisma.admin.findUnique({
+                where: {
+                    email: username
+                }
+            });
+            return admin ? true : false;
+        } catch (error) {
+            console.log("Error checking admin existence: " + error);
+            return false;
         }
     }
 }
