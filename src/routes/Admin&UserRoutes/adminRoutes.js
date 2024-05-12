@@ -13,7 +13,10 @@ router.patch("/admin/promoteToTeacher", authenticateToken, isAdmin, adminControl
 router.delete("/admin/teachers/deleteTeacher", authenticateToken, isAdmin, adminController.deleteTeacher)
 router.post("/admin/teachers/addSecondSubject", authenticateToken, isAdmin, adminController.addSubjectToTeacher)
 
-router.get("/admin/reviewReport", authenticateToken,isAdmin, adminController.reviewReport);
+router.get("/admin/viewReports", authenticateToken,isAdmin, adminController.viewReports);
+
+router.patch("/admin/viewReports/evaluateReport",authenticateToken,isAdmin, adminController.evaluateReport);
+//primeste report_id si o evaluare a unui admin si modifica in db state-ul pt report 
 
 router.post("/admin/sendWarning", authenticateToken,isAdmin, adminController.sendWarning);
 
