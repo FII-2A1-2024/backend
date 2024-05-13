@@ -5,6 +5,7 @@ const HttpCodes = require("../../config/returnCodes");
 const tokenGeneration = require("../../utils/JWT/JWTGeneration");
 const userServices = require("../../services/userServices");
 const tokenBlackListHandler = require('../../utils/JWT/tokenBlackList')
+const userTokensListHandler = require('../../utils/JWT/userTokens')
 
 /**
  * 	Get the json from the post endpoint them make the folowing checks
@@ -25,10 +26,10 @@ async function login(req, res) {
 			handleErrorCodes(res, HttpCodes.BAD_REQUEST);
 			return;
 		}
-		if (!verifyEmailSyntax(email)) {
-			handleErrorCodes(res, HttpCodes.INVALID_EMAIL);
-			return;
-		}
+		//if (!verifyEmailSyntax(email)) {
+		//	handleErrorCodes(res, HttpCodes.INVALID_EMAIL);
+		//	return;
+		//}
 		const hashedPassword = await passwordHashHandler(password);
 
 		code = (await userServices.validCredentials(email, hashedPassword)).resCode;
@@ -58,6 +59,7 @@ async function login(req, res) {
 				socket: socket,
 			};
 			userServices.logUserIn(user);
+			userTokensListHandler.addToUserTokensList(email, token);
 			res.send({
 				resCode: code,
 				token: token,

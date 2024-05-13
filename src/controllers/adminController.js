@@ -1,10 +1,13 @@
 const { log } = require("console");
 const adminServices = require("../services/adminServices");
-
+const timeOutListHandler = require("../utils/JWT/manageTimeOutToken");
+const userTokensListHandler = require("../utils/JWT/userTokens")
 
 class AdminController {
     static async timeoutUser(req, res) {
         try {
+            const userEmail = req.body.email;
+            timeOutListHandler.invalidateToken(userTokensListHandler.getToken(userEmail),1);
             res.status(200).send("success");
         } catch (error) {
             res.status(500).send("Error occured: " + error);
