@@ -8,7 +8,6 @@ router
     .get("/exists", (req, res) => {
         res.send({ data: "User exists" })
     })
-
     .get('/signup/verify', async (req, res) => {
         emailController(req, res)
         // res.status(status).send(toSend)

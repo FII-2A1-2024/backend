@@ -4,6 +4,7 @@ const handleErrorCodes = require("../../utils/handleErrorCodesLogin");
 const HttpCodes = require("../../config/returnCodes");
 const tokenGeneration = require("../../utils/JWT/JWTGeneration");
 const userServices = require("../../services/userServices");
+const tokenBlackListHandler = require('../../utils/JWT/tokenBlackList')
 
 /**
  * 	Get the json from the post endpoint them make the folowing checks
@@ -37,14 +38,19 @@ async function login(req, res) {
 		errorAppeared = await handleErrorCodes(res, code);
 
 		if (!errorAppeared) {
-			const token = tokenGeneration.generateAccessToken(email);
+			let token = 0;
+			if (code === HttpCodes.SUCCESS && !tokenBlackListHandler.isTokenBlacklisted(email)) {
+				token = tokenGeneration.generateAccessToken(email);
+			} else if (code === HttpCodes.SUCCESS && tokenBlackListHandler.isTokenBlacklisted(email)) {
+				token = tokenBlackListHandler.getToken(email);
+				tokenBlackListHandler.removeFromBlacklist(email);
+			}
 			const result = await userServices.getIdByEmail(email);
-			if (result.code !== HttpCodes.SUCCESS) {
+			if (result.resCode !== HttpCodes.SUCCESS) {
 				res.send(result);
 				return;
 			}
 			const uid = result.uid;
-
 			const user = {
 				uid: uid,
 				username: "deocamdata username random nu e implementat",
@@ -61,9 +67,10 @@ async function login(req, res) {
 	} catch (error) {
 		res.send({
 			resCode: HttpCodes.INTERNAL_SERVER_ERROR,
-			message: `Internal server error${error.message}`,
+			message: `Internal server error${error.message}`
 		});
 	}
 }
 
 module.exports = login;
+

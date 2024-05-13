@@ -1,7 +1,10 @@
 const HttpCodes = require('../config/returnCodes')
 const optionsService = require('../services/optionsService')
+const jwt = require("jsonwebtoken")
+const TokenBlackListHandler = require('../utils/JWT/tokenBlackList')
+
 class OptionsController{
-    
+     
     static async addEmail(req, res){
         try{
             const {email, newEmail} = req.body 
@@ -11,6 +14,17 @@ class OptionsController{
             res.status(HttpCodes.INTERNAL_SERVER_ERROR).json({"error": error})
         }
     }
+    //nu e nevoie sa verificam daca requestul are token,deoarece in end-point se afla authenticateToken,care verifica
+    //daca un token a fost pasat in headerul requestului.
+     static async logoutUser(req, res) {
+         const authHeader = req.headers['authorization'];
+         const token = authHeader.split(' ')[1];
+         const decodedToken = jwt.decode(token);
+         const user = decodedToken.user;
+         TokenBlackListHandler.addToBlacklist(user,token);
+         res.json({ message: 'Logout successful' });
+    }
 }
 
-module.exports = OptionsController
+module.exports = OptionsController;
+
