@@ -83,6 +83,10 @@ class AdminController {
             if (!req.body.report_id || !req.body.state) {
                 return res.status(400).send("report_id and state fields are missing from the body of the req");
             }
+            if(req.body.state!='report rejected'&&req.body.state!='report accepted') {
+                return res.status(400).send("state can be <report accepted> or <report rejected> ");
+            }
+
             const report_id=req.body.report_id;
             const wantedState=req.body.state;
             const confirmationOfReview = await adminServices.reviewReport(report_id,wantedState); 

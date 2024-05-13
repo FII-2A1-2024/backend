@@ -46,6 +46,7 @@ class AdminService {
 
     static async reviewReportByID(report_id,wantedState) {
         try {
+            let message = "";
             //cauta in tabela linia cu report_id si inlocuieste state cu wanted state
             //se presupune ca ajung emailuri corecte aici
             const existingReport = await prisma.report.findUnique({
@@ -53,16 +54,22 @@ class AdminService {
             });
     
             if (!existingReport) {
-                throw new Error(`Report with ID ${report_id} doesn't exist.`);
+             message = `Report with ID ${report_id} doesn't exist.`;
+               // throw new Error(`Report with ID ${report_id} doesn't exist.`);
             }
+            else if (existingReport.state !== "verification in pending") {
+                 message = `Report with ID ${report_id} was already reviewed.`;
+               // throw new Error(`Report with ID ${report_id} was already reviewed.`);
+            }
+            else{
             //returneaza un mesaj de confirmare
             const updatedReport = await prisma.report.update({
                 where: { report_id: report_id },
                 data: { state: wantedState }
             });
             console.log(updatedReport);
-            const message = `State of report with ID ${report_id} is now ${wantedState}.`;
-            
+            message = `State of report with ID ${report_id} is now ${wantedState}.`;
+            }
             return message;
         } catch (error) {
             console.error('Eroare la preluarea datelor:', error);
