@@ -16,6 +16,7 @@ router.post("/admin/teachers/addSecondSubject", authenticateToken.authenticateTo
 router.get("/admin/viewReports", authenticateToken.authenticateToken,isAdmin, adminController.viewReports);
 
 router.patch("/admin/viewReports/evaluateReport", authenticateToken.authenticateToken,isAdmin, adminController.evaluateReport);
+
 //primeste report_id si o evaluare a unui admin si modifica in db state-ul pt report 
 
 router.post("/admin/sendWarning", authenticateToken.authenticateToken,isAdmin, adminController.sendWarning);
