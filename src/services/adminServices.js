@@ -11,6 +11,10 @@ dotenv.config({ path: envPath });
 const UserService = require('../services/userServices');
 const TeacherService = require('../services/teacherServices')
 
+
+const PostServices = require('../services/postServices');
+
+
 class AdminService {
 
     //o sa lasam implementarile mai jos, ca sa fie mai usor de urmarit
@@ -39,10 +43,22 @@ class AdminService {
     static async sendWarning(id) {
         return 0;
     }
-    static async deletePost(id) {
-        return 0;
+    static async deletePost(post_id,reason) {
+        return AdminService.deletePostByID(post_id,reason);
     }
     
+
+    static async deletePostByID(post_id,reason) {
+        try {
+            await PostServices.delete(post_id);
+            const message = `Post with ID ${post_id} has been successfully deleted for reason: ${reason}`;
+    
+            return message;
+        } catch (error) {
+            console.error('Eroare la preluarea datelor:', error);
+            throw error;
+        } 
+    }
 
     static async reviewReportByID(report_id,wantedState) {
         try {
@@ -55,11 +71,9 @@ class AdminService {
     
             if (!existingReport) {
              message = `Report with ID ${report_id} doesn't exist.`;
-               // throw new Error(`Report with ID ${report_id} doesn't exist.`);
             }
             else if (existingReport.state !== "verification in pending") {
                  message = `Report with ID ${report_id} was already reviewed.`;
-               // throw new Error(`Report with ID ${report_id} was already reviewed.`);
             }
             else{
             //returneaza un mesaj de confirmare
