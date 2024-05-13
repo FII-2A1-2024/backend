@@ -2,7 +2,7 @@ const UserService = require('./userServices')
 const HttpCodes = require('../config/returnCodes')
 const validator = require('validator')
 const jwtHandler = require('../utils/JWT/JWTGeneration');
-const sendEmail = require('../utils/sendEmail.js')
+const EmailSender = require('../utils/sendEmail')
 
 
 class OptionsService {
@@ -61,13 +61,13 @@ class OptionsService {
     }
 
     static async sendDeletionMail(email) {
-        try {
-            const verificationToken = jwtHandler.generateVerificationToken(email)
+		try {
+			const verificationToken = jwtHandler.generateVerificationToken(email)
             const verificationLink = `http://localhost:${process.env.SERVER_PORT}/deleteAccount/verify?token=${verificationToken}`;
-            sendEmail(email, verificationLink, process.env.TEMPLATE_ID)
+			EmailSender.sendEmail(email, verificationLink, process.env.TEMPLATE_ID)
             return { resCode: HttpCodes.SUCCESS, message: "An email has been sent.Please confirm to delete your account." };
-        } catch (error) {
-            return { resCode: HttpCodes.INTERNAL_SERVER_ERROR, message: "Internal server error." };
+		} catch (error) {
+			return { resCode: HttpCodes.INTERNAL_SERVER_ERROR, message: error };	
         }
     }
 }
