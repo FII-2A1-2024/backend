@@ -1,6 +1,9 @@
-const UserService = require("./userServices");
-const HttpCodes = require("../config/returnCodes");
-const validator = require("validator");
+const UserService = require('./userServices')
+const HttpCodes = require('../config/returnCodes')
+const validator = require('validator')
+const jwtHandler = require('../utils/JWT/JWTGeneration');
+const EmailSender = require('../utils/sendEmail')
+
 
 class OptionsService {
 	static async addEmail(email, newEmail) {
@@ -47,10 +50,26 @@ class OptionsService {
 				message: "You already have a second email added!",
 			};
 		}
+        //5. already has secondary email (?? de cate ori)
+        result = await UserService.hasSecondaryEmail(email)
+        if(result){
+            return {resCode: HttpCodes.HAS_SECOND_EMAIL, message: "You already have a second email added!"}
+        }
 
-		UserService.addEmail(email, newEmail);
-		return { resCode: HttpCodes.SUCCESS, message: "Everything went well." };
-	}
+        UserService.addEmail(email, newEmail)
+        return {resCode: HttpCodes.SUCCESS, message: "Everything went well."}
+    }
+
+    static async sendDeletionMail(email) {
+		try {
+			const verificationToken = jwtHandler.generateVerificationToken(email)
+            const verificationLink = `http://localhost:${process.env.SERVER_PORT}/deleteAccount/verify?token=${verificationToken}`;
+			EmailSender.sendEmail(email, verificationLink, process.env.TEMPLATE_ID)
+            return { resCode: HttpCodes.SUCCESS, message: "An email has been sent.Please confirm to delete your account." };
+		} catch (error) {
+			return { resCode: HttpCodes.INTERNAL_SERVER_ERROR, message: error };	
+        }
+    }
 }
 
 module.exports = OptionsService;
