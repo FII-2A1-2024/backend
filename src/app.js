@@ -31,7 +31,6 @@ app
     .use(postFollowRoutes)
     .use(adminRoutes)
     .use(logoutRoutes)
-    //de invalidat jwt-ul
     .use(deleteAccountRoutes);
 module.exports = app;
 

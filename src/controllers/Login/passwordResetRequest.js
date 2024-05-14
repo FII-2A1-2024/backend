@@ -1,4 +1,4 @@
-const sendEmail = require("../../utils/sendEmail").sendCustomEmail;
+const EmailSender = require("../../utils/sendEmail")
 const resetTokenServices = require("../../utils/JWT/JWTGeneration");
 const HttpCodes = require("../../config/returnCodes");
 const userServices = require("../../services/userServices");
@@ -23,7 +23,7 @@ async function resetPassword(req, res) {
 		const resetToken = resetTokenServices.generateResetToken(email);
 		const resetLink = `http://${process.env.SERVER_IP}:${process.env.SERVER_PORT}/resetPass/verify?token=${resetToken}`;
 		console.log(resetLink);
-		sendEmail(email, "Password Reset", resetLink);
+		EmailSender.sendCustomEmail(email, "Password Reset", resetLink);
 		res.send({
 			resCode: HttpCodes.SUCCESS,
 			message: "The email was succesfuly sent",
