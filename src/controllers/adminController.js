@@ -89,7 +89,6 @@ class AdminController {
             if (req.body.state != 'report rejected' && req.body.state != 'report accepted') {
                 return res.status(400).send("state can be <report accepted> or <report rejected> ");
             }
-
             const report_id = req.body.report_id;
             const wantedState = req.body.state;
             const confirmationOfReview = await adminServices.reviewReport(report_id, wantedState);
@@ -100,7 +99,12 @@ class AdminController {
     }
     static async sendWarning(req, res) {
         try {
-            res.status(200).send("success");
+            if (!req.body.user_email|| !req.body.warning) {
+                return res.status(400).send("user_id and warning fields are missing from the body of the req");
+            }
+            
+            const confirmationForSendingWarning = await adminServices.sendWarning(req.body.user_email,req.body.warning);
+            res.status(200).json(confirmationForSendingWarning);
         } catch (error) {
             res.status(500).send("Error occured: " + error);
         }
@@ -118,7 +122,7 @@ class AdminController {
             res.status(200).json(confirmationForDeletePost);
 
         } catch (error) {
-            res.status(500).send("Error occured at evaluating report: " + error);
+            res.status(500).send("Error occured at deleting a post: " + error);
         }
 
     }

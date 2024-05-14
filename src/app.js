@@ -14,13 +14,9 @@ const signUpRoutes = require('./routes/signUp')
 const loginRoutes = require("./routes/login");
 const optionsRoutes = require('./routes/optionsRoutes')
 const logoutRoutes = require('./routes/logoutRoutes');
-<<<<<<< HEAD
 const deleteAccountRoutes = require('./routes/deleteAccountRoutes')
-
-=======
 const { authenticateToken } = require("./utils/JWT/JWTAuthentication");
 const { checkTokenTimeOut } = require("./utils/JWT/JWTAuthentication");
->>>>>>> c8fefec ([BE2-016] Timeout feature first version completed)
 
 
 app.use(cors());
