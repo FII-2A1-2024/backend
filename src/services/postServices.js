@@ -2,6 +2,7 @@ const post = require("./../models/postModel");
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const commentServices = require("./commentServices");
+const checkProfanity = require("./../utils/ProfanityDetector/profanityValidator");
 
 class PostService {
     static async get(id) {
@@ -95,6 +96,20 @@ class PostService {
         if(url != null && (url.length > 255 || url.length == 0))
             throw new Error("URL entry too long/empty");
 
+        let profanityResult = await checkProfanity(title);
+        profanityResult = JSON.parse(profanityResult);
+
+        if(profanityResult.status){
+            throw new Error("Title contains profane words: " + profanityResult.words);
+        }
+
+        profanityResult = await checkProfanity(description);
+        profanityResult = JSON.parse(profanityResult);
+
+        if(profanityResult.status){
+            throw new Error("Description contains profane words: " + profanityResult.words);
+        }
+
         let parsedVotes;
         if (votes === undefined) {
             parsedVotes = 0;
@@ -150,6 +165,13 @@ class PostService {
                 throw new Error("Invalid id");
             if(!title || title.length > 50 || title.length == 0)
                 throw new Error("Title entry too long/empty");
+            
+            let profanityResult = await checkProfanity(title);
+            profanityResult = JSON.parse(profanityResult);
+
+            if(profanityResult.status){
+                throw new Error("Title contains profane words: " + profanityResult.words);
+            }
 
             let results = null;
             try {
@@ -196,6 +218,12 @@ class PostService {
             if(!description || description.length > 65535 || description.length == 0)
                 throw new Error("Description entry too long/empty");
 
+            let profanityResult = await checkProfanity(description);
+            profanityResult = JSON.parse(profanityResult);
+
+            if(profanityResult.status){
+                throw new Error("Description contains profane words: " + profanityResult.words);
+            }
             let results = null;
             try {
                 results = await prisma.posts.update({
