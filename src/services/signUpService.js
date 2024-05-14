@@ -1,5 +1,5 @@
 const UserService = require("../services/userServices.js");
-const sendEmail = require("../utils/sendEmail.js").sendEmail;
+const EmailSender = require("../utils/sendEmail.js")
 const HttpCodes = require("../config/returnCodes.js");
 
 const path = require("path");
@@ -27,7 +27,7 @@ async function createUser(username, password) {
 					jwtHandler.generateVerificationToken(username);
 				const verificationLink = `http://localhost:${process.env.SERVER_PORT}/signup/verify?token=${verificationToken}`;
 				console.log(verificationLink);
-				sendEmail(username, verificationLink, process.env.TEMPLATE_ID);
+				EmailSender.sendEmail(username, verificationLink, process.env.TEMPLATE_ID);
 				return UserService.addUser(newUser).resCode;
 			}
 			return Promise.resolve(code);
