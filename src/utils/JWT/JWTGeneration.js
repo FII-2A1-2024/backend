@@ -5,7 +5,7 @@ const jwtSecretHandler = require('./JWTSecretGeneration')
 //de completat cu roluri:
 //poate fi admin sau client obisnuit.
 function generateAccessToken(user) {
-  return jwt.sign({ user,timestamp: Date.now() }, jwtSecretHandler.jwtSecret);
+  return jwt.sign({ user, timestamp: Date.now(), expiresIn: '24h' }, jwtSecretHandler.jwtSecret);
 }
 
 //functie ce genereaza token de validare a contului

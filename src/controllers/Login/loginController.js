@@ -6,6 +6,7 @@ const tokenGeneration = require("../../utils/JWT/JWTGeneration");
 const userServices = require("../../services/userServices");
 const tokenBlackListHandler = require('../../utils/JWT/tokenBlackList')
 const userTokensListHandler = require('../../utils/JWT/userTokens')
+const writeEnvLocal = require("../../utils/JWT/JWTSecretGeneration")
 
 /**
  * 	Get the json from the post endpoint them make the folowing checks
@@ -68,6 +69,7 @@ async function login(req, res) {
 			});
 		}
 	} catch (error) {
+		console.log(error)
 		res.send({
 			resCode: HttpCodes.INTERNAL_SERVER_ERROR,
 			message: `Internal server error${error.message}`
