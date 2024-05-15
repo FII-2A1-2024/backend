@@ -126,6 +126,19 @@ class PostService {
 
         if (results == null) 
             throw new Error("Post couldn't be created");
+
+        const post = {
+            author_id: parseInt(author_id),
+            title: title,
+            description: description,
+            votes: parsedVotes,
+            created_at: createdAt,
+            category: category,
+            comments_count: 0,
+            url: url
+        };
+
+        return post;
     }
 
     static async putTitle(
