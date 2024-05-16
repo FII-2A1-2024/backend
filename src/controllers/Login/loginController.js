@@ -19,6 +19,7 @@ const tokenBlackListHandler = require('../../utils/JWT/tokenBlackList')
 async function login(req, res) {
 	try {
 		const { email, password, socket } = req.body;
+		console.log(socket);
 		let code = HttpCodes.SUCCESS;
 
 		if (email === undefined || password === undefined || socket === undefined) {

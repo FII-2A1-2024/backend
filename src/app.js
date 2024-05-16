@@ -11,7 +11,7 @@ const isUser = require("./utils/Middleware/isUser");
 
 const cors = require('cors')
 const signUpRoutes = require('./routes/signUp')
-const loginRoutes = require("./routes/login");
+const loginRoutes = require("./routes/loginRoutes");
 const optionsRoutes = require('./routes/optionsRoutes')
 const logoutRoutes = require('./routes/logoutRoutes');
 const deleteAccountRoutes = require('./routes/deleteAccountRoutes')
@@ -29,6 +29,8 @@ app
     .use(commentRoutes)
     .use(optionsRoutes)
     .use(postFollowRoutes)
-    .use(adminRoutes);
+    .use(adminRoutes)
+    .use(logoutRoutes)
+    .use(deleteAccountRoutes);
 
 module.exports = app;

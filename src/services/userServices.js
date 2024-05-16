@@ -141,10 +141,10 @@ class UserService {
 				message: "Logged in user succesfully",
 			};
 		} catch (error) {
-			console.error(`Error inserting user -> ${error}`);
+			console.error(`Error inserting user in LoggedUsers -> ${error}`);
 			return {
 				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
-				message: "Error inserting user",
+				message: "Error inserting user in LoggedUsers",
 			};
 		}
 	}
