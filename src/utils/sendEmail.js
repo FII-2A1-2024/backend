@@ -9,29 +9,51 @@ dotenv.config({ path: envPath });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmail = async (name, verificationLink, templateId) => {
-    const msg = {
-        to: name,
-        from: {
-            name: 'AOT@doNotReply.com',
-            email: process.env.FROM_EMAIL
-        },
-        templateId: templateId,
-        dynamicTemplateData: {
-            name: "friend",
-            verification_link: verificationLink
-        }
-    };
+class EmailSender { 
+   static async  sendCustomEmail(to, subject, content) {
+      const msg = {
+          to: to,
+          from: {
+              name: "AOT@doNotReply.com",
+              email: process.env.FROM_EMAIL,
+          },
+          subject: subject,
+          text: content,
+      };
+  
+      try {
+          await sgMail.send(msg);
+      } catch (error) {
+          console.error(error);
+  
+          if (error.response) {
+              console.error(error.response.body);
+          }
+      }
+   }
+    static async sendEmail(name, verificationLink, templateId) {
+        const msg = {
+            to: name,
+            from: {
+                name: 'AOT@doNotReply.com',
+                email: process.env.FROM_EMAIL
+            },
+            templateId: templateId,
+            dynamicTemplateData: {
+                name: "friend",
+                verification_link: verificationLink
+            }
+        };
 
-    try {
-        await sgMail.send(msg);
-    } catch (error) {
-        console.error(error);
+        try {
+            await sgMail.send(msg);
+        } catch (error) {
+            console.error(error);
 
-        if (error.response) {
-            console.error(error.response.body);
+            if (error.response) {
+                console.error(error.response.body);
+            }
         }
-    }
+    } 
 };
-
-module.exports = sendEmail;
+module.exports = EmailSender;
