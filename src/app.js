@@ -29,8 +29,6 @@ app
     .use(commentRoutes)
     .use(optionsRoutes)
     .use(postFollowRoutes)
-    .use(adminRoutes)
-    .use(logoutRoutes)
-    .use(deleteAccountRoutes);
-module.exports = app;
+    .use(adminRoutes);
 
+module.exports = app;
