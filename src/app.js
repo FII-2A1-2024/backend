@@ -8,7 +8,6 @@ const postFollowRoutes = require("./routes/postFollowRoutes");
 const adminRoutes = require("./routes/Admin&UserRoutes/adminRoutes");
 const isUser = require("./utils/Middleware/isUser");
 
-
 const cors = require('cors')
 const signUpRoutes = require('./routes/signUp')
 const loginRoutes = require("./routes/login");
@@ -16,9 +15,7 @@ const optionsRoutes = require('./routes/optionsRoutes')
 const logoutRoutes = require('./routes/logoutRoutes');
 const deleteAccountRoutes = require('./routes/deleteAccountRoutes')
 
-
-
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 app
     .use(express.json())
@@ -33,4 +30,3 @@ app
     .use(logoutRoutes)
     .use(deleteAccountRoutes);
 module.exports = app;
-
