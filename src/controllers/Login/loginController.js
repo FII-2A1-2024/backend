@@ -4,7 +4,8 @@ const handleErrorCodes = require("../../utils/handleErrorCodesLogin");
 const HttpCodes = require("../../config/returnCodes");
 const tokenGeneration = require("../../utils/JWT/JWTGeneration");
 const userServices = require("../../services/userServices");
-const tokenBlackListHandler = require('../../utils/JWT/tokenBlackList')
+const tokenBlackListHandler = require("../../utils/JWT/tokenBlackList");
+const randomUsernames = require("../../utils/randomUsernames");
 
 /**
  * 	Get the json from the post endpoint them make the folowing checks
@@ -19,7 +20,6 @@ const tokenBlackListHandler = require('../../utils/JWT/tokenBlackList')
 async function login(req, res) {
 	try {
 		const { email, password, socket } = req.body;
-		console.log(socket);
 		let code = HttpCodes.SUCCESS;
 
 		if (email === undefined || password === undefined || socket === undefined) {
@@ -41,9 +41,15 @@ async function login(req, res) {
 
 		if (!errorAppeared) {
 			let token = 0;
-			if (code === HttpCodes.SUCCESS && !tokenBlackListHandler.isTokenBlacklisted(email)) {
+			if (
+				code === HttpCodes.SUCCESS &&
+				!tokenBlackListHandler.isTokenBlacklisted(email)
+			) {
 				token = tokenGeneration.generateAccessToken(email);
-			} else if (code === HttpCodes.SUCCESS && tokenBlackListHandler.isTokenBlacklisted(email)) {
+			} else if (
+				code === HttpCodes.SUCCESS &&
+				tokenBlackListHandler.isTokenBlacklisted(email)
+			) {
 				token = tokenBlackListHandler.getToken(email);
 				tokenBlackListHandler.removeFromBlacklist(email);
 			}
@@ -53,9 +59,10 @@ async function login(req, res) {
 				return;
 			}
 			const uid = result.uid;
+			const username = await randomUsernames.generateUsername();
 			const user = {
 				uid: uid,
-				username: "deocamdata username random nu e implementat",
+				username: username,
 				socket: socket,
 			};
 			userServices.logUserIn(user);
@@ -63,15 +70,15 @@ async function login(req, res) {
 				resCode: code,
 				token: token,
 				id: uid,
+				username: username,
 				message: "The user has been succesfully logged in",
 			});
 		}
 	} catch (error) {
 		res.send({
 			resCode: HttpCodes.INTERNAL_SERVER_ERROR,
-			message: `Internal server error${error.message}`
+			message: `Internal server error${error.message}`,
 		});
 	}
 }
 module.exports = login;
-
