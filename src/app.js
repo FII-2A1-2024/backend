@@ -15,7 +15,7 @@ const optionsRoutes = require("./routes/optionsRoutes");
 const logoutRoutes = require("./routes/logoutRoutes");
 const deleteAccountRoutes = require("./routes/deleteAccountRoutes");
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 app
 	.use(express.json())
@@ -29,5 +29,4 @@ app
 	.use(adminRoutes)
 	.use(logoutRoutes)
 	.use(deleteAccountRoutes);
-
 module.exports = app;
