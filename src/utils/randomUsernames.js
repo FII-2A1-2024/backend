@@ -130,9 +130,9 @@ class PairSet {
 }
 // TO DO on logout delete from this DataStructure the username of the user that logs out
 const existingPairs = new PairSet();
-class Animals {
-	async generateUsername() {
-		return Animals.generateRandomUsername();
+class AnimalNameGenerator {
+	async generate() {
+		return AnimalNameGenerator.generateRandomUsername();
 	}
 
 	static async generateRandomUsername() {
@@ -156,6 +156,6 @@ class Animals {
 }
 
 module.exports = {
-	Animals: new Animals(),
+	AnimalNameGenerator: new AnimalNameGenerator(),
 	existingUsernames: existingPairs,
 };

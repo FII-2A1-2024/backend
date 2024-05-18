@@ -5,7 +5,8 @@ const HttpCodes = require("../../config/returnCodes");
 const tokenGeneration = require("../../utils/JWT/JWTGeneration");
 const userServices = require("../../services/userServices");
 const tokenBlackListHandler = require("../../utils/JWT/tokenBlackList");
-const randomUsernames = require("../../utils/randomUsernames").Animals;
+const randomUsernames =
+	require("../../utils/randomUsernames").AnimalNameGenerator;
 
 /**
  * 	Get the json from the post endpoint them make the folowing checks
