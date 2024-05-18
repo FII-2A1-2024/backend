@@ -132,8 +132,8 @@ class UserService {
 				data: {
 					uid: user.uid,
 					username: user.username,
-					socket: user.socket
-				}
+					socket: user.socket,
+				},
 			});
 			console.log(`Added user ${instance.emailPrimary}`);
 			return {
@@ -141,10 +141,10 @@ class UserService {
 				message: "Logged in user succesfully",
 			};
 		} catch (error) {
-			console.error(`Error inserting user -> ${error}`);
+			console.error(`Error inserting user in LoggedUsers -> ${error}`);
 			return {
 				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
-				message: "Error inserting user",
+				message: "Error inserting user in LoggedUsers",
 			};
 		}
 	}
@@ -195,9 +195,15 @@ class UserService {
 					emailPrimary: email,
 				},
 			});
+			if (user !== null)
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "Existance checked",
+					value: user !== null,
+				};
 			return {
-				resCode: HttpCodes.SUCCESS,
-				message: "Existance checked",
+				resCode: HttpCodes.USER_DOESNOT_EXIST,
+				message: "User does not exist",
 				value: user !== null,
 			};
 		} catch (error) {
@@ -215,9 +221,15 @@ class UserService {
 			const user = await prisma.user.findUnique({
 				where: { emailPrimary: email },
 			});
+			if (user !== null && user.verifiedEmail === 1)
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "Verification succesfull",
+					value: user && user.verifiedEmail === 1,
+				};
 			return {
-				resCode: HttpCodes.SUCCESS,
-				message: "Verification succesfull",
+				resCode: HttpCodes.UNVERIFIED_EMAIL,
+				message: "User is not verified",
 				value: user && user.verifiedEmail === 1,
 			};
 		} catch (error) {
@@ -292,9 +304,15 @@ class UserService {
 					emailPrimary: email,
 				},
 			});
+			if (user && user.emailSecondary !== "null")
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "Second email checked succesfully",
+					value: user && user.emailSecondary !== "null",
+				};
 			return {
-				resCode: HttpCodes.SUCCESS,
-				message: "Second email checked succesfully",
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Unable to check second email",
 				value: user && user.emailSecondary !== "null",
 			};
 		} catch (error) {
