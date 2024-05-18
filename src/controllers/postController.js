@@ -37,8 +37,8 @@ class PostController {
                     url = await uploadToS3(file);
                     fs.unlinkSync(file.path);
                 }
-                await postServices.post(author_id, title, description, votes, category, url);
-                res.status(200).json({ "status": "ok", "message": "post created successfully" });
+                const post = await postServices.post(author_id, title, description, votes, category, url);
+                res.status(200).json({ "status": "ok", post });
             } catch (error) {
                 res.status(500).json({ "status": "err", "message": error.message });
             }
@@ -72,7 +72,8 @@ class PostController {
                 } else {
                     throw new Error("Too many or few parameters");
                 }
-                res.status(200).json({ "status":"ok", "message":"post updated successfully" });
+                const post = await postServices.get(id);
+                res.status(200).json({ "status":"ok", post});
             } catch (error) {
                 res.status(500).json({ "status":"err", "message": error.message });
             }
