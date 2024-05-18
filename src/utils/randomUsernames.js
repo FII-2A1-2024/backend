@@ -1,47 +1,161 @@
-const { faker } = require("@faker-js/faker");
+const animals = [
+	"Axolotl",
+	"Bear",
+	"Beetle",
+	"Bison",
+	"Cat",
+	"Cheetah",
+	"Chicken",
+	"Clam",
+	"Crow",
+	"Deer",
+	"Dingo",
+	"Eagle",
+	"Elephant",
+	"Emu",
+	"Falcon",
+	"Fox",
+	"Goat",
+	"Goose",
+	"Hamster",
+	"Hermit Crab",
+	"Hornet",
+	"Hummingbird",
+	"Kangaroo",
+	"Kiwi",
+	"Koala",
+	"Ladybug",
+	"Lizard",
+	"Lobster",
+	"Moose",
+	"Octopus",
+	"Orca",
+	"Ostrich",
+	"Penguin",
+	"Platypus",
+	"Rockfish",
+	"Salmon",
+	"Scorpion",
+	"Seagull",
+	"Seahorse",
+	"Seal",
+	"Shark",
+	"Snake",
+	"Spider",
+	"Sponge",
+	"Squid",
+	"Starfish",
+	"Walrus",
+	"Whale",
+	"Wolf",
+	"Zebra",
+];
+const colors = [
+	"Red",
+	"Green",
+	"Blue",
+	"Yellow",
+	"Cyan",
+	"Magenta",
+	"Orange",
+	"Purple",
+	"Pink",
+	"Brown",
+	"Lime",
+	"Indigo",
+	"Violet",
+	"Turquoise",
+	"Teal",
+	"Maroon",
+	"Olive",
+	"Navy",
+	"Coral",
+	"Gold",
+	"Silver",
+	"Gray",
+	"Black",
+	"White",
+	"Crimson",
+	"Salmon",
+	"Beige",
+	"Lavender",
+	"Mint",
+	"Peach",
+	"Plum",
+	"Chocolate",
+	"Azure",
+	"Khaki",
+	"Ivory",
+	"Orchid",
+	"Tan",
+	"Chartreuse",
+	"Aquamarine",
+	"Sienna",
+	"Honeydew",
+	"Fuchsia",
+	"Periwinkle",
+	"SlateBlue",
+	"SeaGreen",
+	"Moccasin",
+	"RosyBrown",
+	"Thistle",
+	"Tomato",
+	"SandyBrown",
+];
+let animalId = 0;
+let colorId = 1;
 
+class PairSet {
+	constructor() {
+		this.set = new Set();
+	}
+	encode(animal, color) {
+		return `${animal},${color}`;
+	}
+	add(animal, color) {
+		const encoded = this.encode(animal, color);
+		this.set.add(encoded);
+	}
+	has(animal, color) {
+		const encoded = this.encode(animal, color);
+		this.set.has(encoded);
+	}
+	delete(animal, color) {
+		const encoded = this.encode(animal, color);
+		this.set.delete(encoded);
+	}
+	size() {
+		return this.set.size;
+	}
+}
+// TO DO on logout delete from this DataStructure the username of the user that logs out
+const existingPairs = new PairSet();
 class Animals {
 	async generateUsername() {
 		return Animals.generateRandomUsername();
 	}
 
 	static async generateRandomUsername() {
-		const animalType = faker.animal.type();
 		let animalName;
-		switch (animalType) {
-			case "dog":
-				animalName = faker.animal.dog();
-				break;
-			case "bear":
-				animalName = faker.animal.bear();
-				break;
-			case "bird":
-				animalName = faker.animal.bird();
-				break;
-			case "cat":
-				animalName = faker.animal.cat();
-				break;
-			case "cow":
-				animalName = faker.animal.cow();
-				break;
-			case "horse":
-				animalName = faker.animal.horse();
-				break;
-			case "lion":
-				animalName = faker.animal.lion();
-				break;
-			case "rabbit":
-				animalName = faker.animal.rabbit();
-				break;
-			case "snake":
-				animalName = faker.animal.snake();
-				break;
-			default:
-				animalName = faker.animal.dog();
-				break;
-		}
-		return `Anonymus ${animalName}`;
+		let colorName;
+		console.log(existingPairs.size());
+		if (existingPairs.size() === animals.length * colors.length)
+			return "Anonymus Something... All usernames are in use";
+		do {
+			animalId += 1;
+			if (animalId > animals.length) {
+				animalId = 1;
+				colorId += 1;
+			}
+			animalName = animals[animalId - 1];
+			colorName = colors[colorId - 1];
+		} while (existingPairs.has(animalName, colorName));
+		existingPairs.add(animalName, colorName);
+		return `Anonymus ${colorName} ${animalName}`;
 	}
 }
 
-module.exports = new Animals();
+module.exports = {
+	Animals: new Animals(),
+	existingUsernames: existingPairs,
+};
