@@ -31,6 +31,16 @@ class PostFollowController {
             res.status(500).json({ "status":"err", "message": error.message });
         }
     }
+    static async delete(req, res) {
+        const user_id = parseInt(req.query.user_id);
+        const post_id = parseInt(req.query.post_id);
+        try {
+            await postFollowServices.delete(user_id, post_id);
+            res.status(200).json({ "status":"ok", "message":"post follow deleted successfully" });
+        } catch (error) {
+            res.status(500).json({ "status":"err", "message": error.message });
+        }
+    }
     static async deleteByUser(req, res) {
         const user_id = parseInt(req.query.id);
         try {

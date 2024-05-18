@@ -70,6 +70,23 @@ class PostFollowService {
         if(!post_id || isNaN(parseInt(post_id)) || parseInt(post_id) <= 0)  
             throw new Error("Invalid post_id");
 
+        let result = null;
+        try {
+            result = await prisma.postsFollow.findMany({
+                where: {
+                    user_id: user_id,
+                    post_id: post_id
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if(result != null && result.length > 0 )
+            throw new Error("Post follow already exists");
+
         let results = null;
         try {
             results = await prisma.postsFollow.create({
@@ -88,6 +105,45 @@ class PostFollowService {
             throw new Error("Post follow couldn't be created");
 
         return results;
+    }
+
+    static async delete(user_id, post_id) {
+        if(!user_id) throw new Error("Invalid user_id entry");
+        if(!post_id) throw new Error("Invalid post_id entry");
+
+        let result = null;
+        try {
+            result = await prisma.postsFollow.findMany({
+                where: {
+                    user_id: user_id,
+                    post_id: post_id
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if (result != null  && result.length > 0){
+            let results = null;
+            try {
+                results = await prisma.postsFollow.deleteMany({
+                    where: {
+                        user_id: user_id,
+                        post_id: post_id
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            if (results == null) 
+                throw new Error("Post follow couldn't be deleted");
+        }
+        else throw new Error("Post follow with the given user_id doesn't exist");
     }
 
     static async deleteByUser(user_id) {
