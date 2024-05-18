@@ -13,14 +13,14 @@ class CommentController {
     static async post(req, res) {
         const { post_id, parent_id, author_id, description, votes } = req.body;
         try {
-            await commentServices.post(
+            const comment_id = await commentServices.post(
                 post_id,
                 parent_id,
                 author_id,
                 description,
                 votes
             );
-            res.status(200).json({"status":"ok", "message":"Comment added to db"});
+            res.status(200).json({"status":"ok", comment_id});
         } catch (error) {
             res.status(500).json({"status":"err", "message": error.message});
         }
@@ -44,7 +44,7 @@ class CommentController {
             } else {
                 throw new Error("Too many or few parameters");
             }
-            res.status(200).json({ "status":"ok", "message":"Comment updated in db"});
+            res.status(200).json({ "status":"ok", id});
         } catch (error) {
             res.status(500).json({ "status":"err", "message": error.message });
         }

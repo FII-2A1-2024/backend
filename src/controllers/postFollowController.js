@@ -22,11 +22,11 @@ class PostFollowController {
     static async post(req, res) {
         const { user_id, post_id } = req.body;
         try {
-            await postFollowServices.post(
+            const postFollow = await postFollowServices.post(
                 user_id,
                 post_id
             );
-            res.status(200).json({ "status":"ok", "message":"post follow created successfully" });
+            res.status(200).json({ "status":"ok", postFollow });
         } catch (error) {
             res.status(500).json({ "status":"err", "message": error.message });
         }

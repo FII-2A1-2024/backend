@@ -58,100 +58,102 @@ class commentServices {
         return { detaliiComentariu: comment, subcomentarii: nestedSubcomments };
     }
     
-    static async post(
-        post_id,
-        parent_id,
-        author_id,
-        description,
-        votes
-    ) {
-        const createdAt = new Date();
+static async post(
+    post_id,
+    parent_id,
+    author_id,
+    description,
+    votes
+) {
+    const createdAt = new Date();
 
-        if(!post_id || isNaN(parseInt(post_id)) || parseInt(post_id) <= 0)  
+    if (!post_id || isNaN(parseInt(post_id)) || parseInt(post_id) <= 0)
         throw new Error("Invalid post_id");
-        let result = null;
-        try {
-            result = await prisma.posts.findUnique({
-                where: {
-                    id: post_id
-                }
-            });
-        } catch (error) {
-            throw error;
-        } finally {
-            await prisma.$disconnect();
-        }
-        if(result == null)
-            throw new Error("Inexistent post_id");
+    let result = null;
+    try {
+        result = await prisma.posts.findUnique({
+            where: {
+                id: post_id
+            }
+        });
+    } catch (error) {
+        throw error;
+    } finally {
+        await prisma.$disconnect();
+    }
+    if (result == null)
+        throw new Error("Inexistent post_id");
 
-        if(!parent_id || isNaN(parseInt(parent_id)))  
-            throw new Error("Invalid parent_id");
-        result = null;
-        try {
-            result = await prisma.comments.findUnique({
-                where: {
-                    id: parent_id
-                }
-            });
-        } catch (error) {
-            throw error;
-        } finally {
-            await prisma.$disconnect();
-        }
-        if(result == null && parent_id != -1)
-            throw new Error("Inexistent parent_id");
-        
-        if(!author_id || isNaN(parseInt(author_id)) || parseInt(author_id) <= 0)  
-            throw new Error("Invalid author_id");
-        if(!description || description.length > 65535 || description.length == 0)
-            throw new Error("Description entry too long/empty");
-        let parsedVotes;
-        if (votes === undefined) {
-            parsedVotes = 0;
-        } else if (isNaN(parseInt(votes))) {
-            throw new Error("Invalid votes");
-        } else {
-            parsedVotes = parseInt(votes);
-        }   
+    if (!parent_id || isNaN(parseInt(parent_id)))
+        throw new Error("Invalid parent_id");
+    result = null;
+    try {
+        result = await prisma.comments.findUnique({
+            where: {
+                id: parent_id
+            }
+        });
+    } catch (error) {
+        throw error;
+    } finally {
+        await prisma.$disconnect();
+    }
+    if (result == null && parent_id != -1)
+        throw new Error("Inexistent parent_id");
 
-        let results = null;
-        try {
-            results = await prisma.comments.create({
-                data: {
-                    post_id: post_id,
-                    parent_id: parent_id,
-                    author_id: author_id,
-                    description: description,
-                    votes: parsedVotes,
-                    created_at: createdAt
-                }
-            });
-        } catch (error) {
-            throw error;
-        } finally {
-            await prisma.$disconnect();
-        }
-
-        if (results == null) 
-            throw new Error("Comment couldn't be created");
-        try {
-            await prisma.posts.update({
-                where: {
-                    id: post_id
-                },
-                data: {
-                    comments_count: {
-                        increment: 1
-                    }
-                }
-            });
-        } catch (error) {
-            throw error;
-        } finally {
-            await prisma.$disconnect();
-        }
+    if (!author_id || isNaN(parseInt(author_id)) || parseInt(author_id) <= 0)
+        throw new Error("Invalid author_id");
+    if (!description || description.length > 65535 || description.length == 0)
+        throw new Error("Description entry too long/empty");
+    let parsedVotes;
+    if (votes === undefined) {
+        parsedVotes = 0;
+    } else if (isNaN(parseInt(votes))) {
+        throw new Error("Invalid votes");
+    } else {
+        parsedVotes = parseInt(votes);
     }
 
+    let results = null;
+    try {
+        results = await prisma.comments.create({
+            data: {
+                post_id: post_id,
+                parent_id: parent_id,
+                author_id: author_id,
+                description: description,
+                votes: parsedVotes,
+                created_at: createdAt
+            }
+        });
+    } catch (error) {
+        throw error;
+    } finally {
+        await prisma.$disconnect();
+    }
+
+    if (results == null)
+        throw new Error("Comment couldn't be created");
+    try {
+        await prisma.posts.update({
+            where: {
+                id: post_id
+            },
+            data: {
+                comments_count: {
+                    increment: 1
+                }
+            }
+        });
+    } catch (error) {
+        throw error;
+    } finally {
+        await prisma.$disconnect();
+    }
+
+    // Returnăm ID-ul comentariului creat
+    return results.id;
+}
 
     static async putDescription(
         id,

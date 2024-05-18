@@ -86,6 +86,8 @@ class PostFollowService {
         
         if (results == null) 
             throw new Error("Post follow couldn't be created");
+
+        return results;
     }
 
     static async deleteByUser(user_id) {
