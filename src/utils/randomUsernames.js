@@ -104,6 +104,7 @@ const colors = [
 ];
 let animalId = 0;
 let colorId = 1;
+let notUID = 0;
 
 class PairSet {
 	constructor() {
@@ -139,7 +140,7 @@ class AnimalNameGenerator {
 		let animalName;
 		let colorName;
 		console.log(existingPairs.size());
-		if (existingPairs.size() === animals.length * colors.length)
+		if (existingPairs.size() === animals.length * colors.length * 999999)
 			return "Anonymus Something... All usernames are in use";
 		do {
 			animalId += 1;
@@ -147,11 +148,16 @@ class AnimalNameGenerator {
 				animalId = 1;
 				colorId += 1;
 			}
+			if (colorId > colors.length) {
+				colorId = 1;
+				notUID += 1;
+			}
 			animalName = animals[animalId - 1];
 			colorName = colors[colorId - 1];
 		} while (existingPairs.has(animalName, colorName));
 		existingPairs.add(animalName, colorName);
-		return `Anonymus ${colorName} ${animalName}`;
+		const newId = notUID.toString().padStart(6, "0").substring(0, 6);
+		return `Anonymus ${colorName} ${animalName} #${newId}`;
 	}
 }
 
