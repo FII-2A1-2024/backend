@@ -141,7 +141,7 @@ class AnimalNameGenerator {
 		let colorName;
 		console.log(existingPairs.size());
 		if (existingPairs.size() === animals.length * colors.length * 999999)
-			return "Anonymus Something... All usernames are in use";
+			return "Anonymous Something... All usernames are in use";
 		do {
 			animalId += 1;
 			if (animalId > animals.length) {
@@ -157,7 +157,7 @@ class AnimalNameGenerator {
 		} while (existingPairs.has(animalName, colorName));
 		existingPairs.add(animalName, colorName);
 		const newId = notUID.toString().padStart(6, "0").substring(0, 6);
-		return `Anonymus ${colorName} ${animalName} #${newId}`;
+		return `Anonymous ${colorName} ${animalName} #${newId}`;
 	}
 }
 
