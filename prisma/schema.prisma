@@ -57,3 +57,12 @@ model Admin {
   email   String   @unique
   level   Int      @default(1)
 }
+model Teachers {
+  email           String      @id
+  materie         String
+  materieSecundara String?
+}
+
+model Email_profesori{
+email String @unique
+}
