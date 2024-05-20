@@ -28,6 +28,10 @@ class PostController {
         }
     }
     static async post(req, res) {   
+        const authHeader = req.headers['authorization'];
+        const token = authHeader.split(' ')[1];
+        const decodedToken = jwt.decode(token);
+
         upload.single('file')(req, res, async function(err) {
             if (err) {
                 return res.status(500).json({ "status": "err", "message": err.message });
@@ -42,8 +46,20 @@ class PostController {
                     url = await uploadToS3(file);
                     fs.unlinkSync(file.path);
                 }
+
+                const users = await prisma.user.findMany({
+                    where: {
+                      emailPrimary: decodedToken.user,
+                    },
+                  });
+          
+                  const user = users.length > 0 ? users[0] : null;
+                  console.log(user);
+                  if (!user) {
+                    return res.status(404).json({ "status": "err", "message": "User not found" });
+                  }
                 
-                const post = await postServices.post(author_id, username, title, description, votes, category, url);
+                const post = await postServices.post(author_id, user.uid, username, title, description, votes, category, url);
                 res.status(200).json({ "status": "ok", post });
             } catch (error) {
                 res.status(500).json({ "status": "err", "message": error.message });
