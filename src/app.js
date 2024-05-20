@@ -4,6 +4,7 @@ const resetPasswordRoutes = require("./routes/resetPasswordRoutes");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const postFollowRoutes = require("./routes/postFollowRoutes");
+const messagesRoutes = require("./routes/messagesRoutes");
 
 const adminRoutes = require("./routes/Admin&UserRoutes/adminRoutes");
 const isUser = require("./utils/Middleware/isUser");
@@ -26,6 +27,7 @@ app
 	.use(commentRoutes)
 	.use(optionsRoutes)
 	.use(postFollowRoutes)
+	.use(messagesRoutes)
 	.use(adminRoutes)
 	.use(logoutRoutes)
 	.use(deleteAccountRoutes);
