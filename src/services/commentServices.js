@@ -27,6 +27,7 @@ class commentServices {
                 const receivedCommentForAPost = new comment(
                     result.id,
                     result.post_id,
+                    result.username,
                     result.parent_id,
                     result.author_id,
                     result.description,
@@ -60,6 +61,7 @@ class commentServices {
     
 static async post(
     post_id,
+    username,
     parent_id,
     author_id,
     description,
@@ -105,6 +107,8 @@ static async post(
         throw new Error("Invalid author_id");
     if (!description || description.length > 65535 || description.length == 0)
         throw new Error("Description entry too long/empty");
+    if(!username || username.length > 50 || username.length == 0)
+        throw new Error("Username too long/empty");
     let parsedVotes;
     if (votes === undefined) {
         parsedVotes = 0;
@@ -119,6 +123,7 @@ static async post(
         results = await prisma.comments.create({
             data: {
                 post_id: post_id,
+                username: username,
                 parent_id: parent_id,
                 author_id: author_id,
                 description: description,

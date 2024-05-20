@@ -27,6 +27,7 @@ class PostService {
             const receivedPost = new post(
                 result.id,
                 result.author_id,
+                result.username,
                 result.title,
                 result.description,
                 result.votes,
@@ -59,6 +60,7 @@ class PostService {
                 const receivedPost = new post(
                     result.id,
                     result.author_id,
+                    result.username,
                     result.title,
                     result.description,
                     result.votes,
@@ -77,6 +79,7 @@ class PostService {
 
     static async post(
         author_id,
+        username,
         title,
         description,
         votes,
@@ -89,6 +92,8 @@ class PostService {
             throw new Error("Invalid author_id");
         if(!title || title.length > 50 || title.length == 0)
             throw new Error("Title entry too long/empty");
+        if(!username || username.length > 50 || username.length == 0)
+            throw new Error("Username too long/empty");
         if(!description || description.length > 65535 || description.length == 0)
             throw new Error("Description entry too long/empty");
         if(!category || category.length > 50 || category.length == 0)
@@ -124,6 +129,7 @@ class PostService {
             results = await prisma.posts.create({
                 data: {
                     author_id: parseInt(author_id),
+                    username: username,
                     title: title,
                     description: description,
                     votes: parsedVotes,
@@ -145,6 +151,7 @@ class PostService {
         const post = {
             author_id: parseInt(author_id),
             title: title,
+            username: username,
             description: description,
             votes: parsedVotes,
             created_at: createdAt,

@@ -11,10 +11,11 @@ class CommentController {
         }
     }
     static async post(req, res) {
-        const { post_id, parent_id, author_id, description, votes } = req.body;
+        const { post_id, username, parent_id, author_id, description, votes } = req.body;
         try {
             const comment_id = await commentServices.post(
                 post_id,
+                username,
                 parent_id,
                 author_id,
                 description,
