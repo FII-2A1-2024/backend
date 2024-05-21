@@ -62,6 +62,18 @@ class UserService {
 		return UserService.deleteLoggedOutUserById(id);
 	}
 
+	async deleteTimedOutUser(id) {
+		return UserService.deleteTimedOutUserById(id);
+	}
+
+	async getTimedOutUser(id) {
+		return UserService.getTimedOutUserById(id);
+	}
+
+	async insertIntoTimedOutUsers(user) {
+		return UserService.insertIntoTimedOutUsersLogic(user);
+	}
+
 	static async SocketById(id) {
 		try {
 			const socket = await prisma.LoggedUsers.findFirst({
@@ -421,14 +433,16 @@ class UserService {
 	}
 	static async deleteLoggedOutUserById(id) {
 			try {
-				await prisma.loggedUsers.deleteMany({
+				const result = await prisma.loggedUsers.deleteMany({
 					where: { uid: id, },
 				});
-				console.log(`Deleted user with id ${id}`);
-				return {
-					resCode: HttpCodes.SUCCESS,
-					message: "Deleted user succesfuly",
-				};
+				if (result.count > 0) {
+					console.log(`Deleted user with id ${id}`);
+				}
+				else {
+					console.log(`User with id ${id} is not present in the database LoggedUsers table`);
+				}
+				
 			} catch (error) {
 				console.error(`Error deleting entity -> ${error}`);
 				return {
@@ -436,6 +450,60 @@ class UserService {
 					message: "Error deleting user",
 				};
 	     	}	
+	}
+
+	static async deleteTimedOutUserById(id) {
+		try {
+			const result = await prisma.TimedOutUsers.deleteMany({
+				where: { uid: id, },
+			});
+			if (result.count > 0) {
+				console.log(`Deleted user with id ${id}`);
+			}
+			else {
+				console.log(`User with id ${id} is not present in the database TimedOutUsers table`);
+			}
+
+		} catch (error) {
+			console.error(`Error deleting entity -> ${error}`);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error deleting user",
+			};
+		}	
+	}
+
+	static async getTimedOutUserById(id) {
+		try {
+			const user = await prisma.TimedOutUsers.findUnique({
+				where: {
+					uid: id,
+				},
+			});
+			if (user != null)
+				return user;
+			else {
+				console.log(`User with id ${id} is not present in the database TimedOutUsers table`)
+			}
+		} catch (error) {
+			console.error(`error getting entity -> ${error}`);
+		}	
+	}
+
+	static async insertIntoTimedOutUsersLogic(user) {
+		try {
+			const instance = await prisma.TimedOutUsers.create({
+				data: {
+					uid: user.uid,
+					email: user.email,
+					timeout_start: user.timeout_start,
+					timeout_duration: user.timeout_duration,
+				},
+			});
+			console.log(`Added user ${instance.email}`);
+		} catch (error) {
+			console.error(`error inserting entity -> ${error}`)
+		}
 	}
 }
 

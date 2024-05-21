@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 //functie generica pentru generarea cheii private a unui token
+//va fi folosita doar la tokenele pentru validarea unui cont nou creat.
 function generateSecret(length) {
     return crypto.randomBytes(Math.ceil(length / 2))
         .toString('hex')
@@ -7,7 +8,6 @@ function generateSecret(length) {
 }
 
 const jwtSecret = generateSecret(32);
-// console.log(jwtSecret);
 module.exports = {
     jwtSecret: jwtSecret
 };

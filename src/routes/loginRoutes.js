@@ -21,7 +21,7 @@ router
 		res.send({ data: "Login Stage" });
 	})
 	.post("/login", (req, res) => {
-		loginController(req, res);
+		loginController.login(req, res);
 	});
 
 module.exports = router;

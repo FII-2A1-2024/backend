@@ -1,10 +1,10 @@
-const authenticateToken = require("../../utils/JWT/JWTAuthentication");
+const { authenticateToken, refreshTokenCheck } = require("../../utils/JWT/JWTAuthentication");
 const isAdmin = require("../../utils/Middleware/isAdmin"); 
 const express = require("express");
 const router = express.Router();
 const adminController = require("../../controllers/adminController");
 //permissions admin
-router.patch("/admin/timeoutUser", authenticateToken, isAdmin, adminController.timeoutUser); 
+router.patch("/admin/timeoutUser", refreshTokenCheck,authenticateToken, isAdmin, adminController.timeoutUser); 
 
 router. patch("/admin/promoteUser",authenticateToken,isAdmin,adminController.promoteUser);
 

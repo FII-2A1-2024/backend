@@ -68,3 +68,11 @@ model Teachers {
 model Email_profesori{
 email String @unique
 }
+
+model TimedOutUsers {
+  id              Int      @id @default(autoincrement())
+  uid             Int      @unique
+  email           String   @unique
+  timeout_start   DateTime
+  timeout_duration Int
+}

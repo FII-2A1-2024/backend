@@ -17,7 +17,7 @@ const randomUsernames =
  *
  * 	NOTE: any NO will result in a proper error code
  */
-
+let refreshTokens = [];
 async function login(req, res) {
 	try {
 		const { email, password, socket } = req.body;
@@ -39,21 +39,24 @@ async function login(req, res) {
 
 		code = (await userServices.isVerifed(email)).resCode;
 		errorAppeared = await handleErrorCodes(res, code);
-
+        
 		if (!errorAppeared) {
 			let token = 0;
-			if (
-				code === HttpCodes.SUCCESS &&
-				!tokenBlackListHandler.isTokenBlacklisted(email)
-			) {
+			let refreshToken = 0;
+			//if (
+			///	code === HttpCodes.SUCCESS &&
+			//	!tokenBlackListHandler.isTokenBlacklisted(email)
+			//) {
 				token = tokenGeneration.generateAccessToken(email);
-			} else if (
-				code === HttpCodes.SUCCESS &&
-				tokenBlackListHandler.isTokenBlacklisted(email)
-			) {
-				token = tokenBlackListHandler.getToken(email);
-				tokenBlackListHandler.removeFromBlacklist(email);
-			}
+			    refreshToken = tokenGeneration.generateRefreshToken(email);
+				refreshTokens.push(refreshToken);
+			//} else if (
+			//	code === HttpCodes.SUCCESS &&
+			//	tokenBlackListHandler.isTokenBlacklisted(email)
+			//) {
+			//	token = tokenBlackListHandler.getToken(email);
+			//	tokenBlackListHandler.removeFromBlacklist(email);
+			//}
 			const result = await userServices.getIdByEmail(email);
 			if (result.resCode !== HttpCodes.SUCCESS) {
 				res.send(result);
@@ -66,14 +69,28 @@ async function login(req, res) {
 				username: username,
 				socket: socket,
 			};
+			const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
 			userServices.logUserIn(user);
-			res.send({
-				resCode: code,
-				token: token,
-				id: uid,
-				username: username,
-				message: "The user has been succesfully logged in",
-			});
+			res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'Strict',
+				maxAge: oneYearInMilliseconds
+			})
+				.cookie('accessToken', token, {
+					httpOnly: true,
+					secure: true,
+					sameSite: 'Strict',
+					maxAge: oneYearInMilliseconds
+				})
+
+				.send({
+					resCode: code,
+					token: token,
+					id: uid,
+					username: username,
+					message: "The user has been successfully logged in",
+				});
 		}
 	} catch (error) {
 		res.send({
@@ -82,4 +99,7 @@ async function login(req, res) {
 		});
 	}
 }
-module.exports = login;
+module.exports = {
+	login,
+	refreshTokens
+};

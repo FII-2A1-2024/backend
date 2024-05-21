@@ -3,13 +3,13 @@ const OptionsService = require('../services/optionsService');
 const jwt = require("jsonwebtoken");
 const TokenBlackListHandler = require('../utils/JWT/tokenBlackList');
 const UserService = require('../services/userServices')
+const refreshTokensHandler = require('../controllers/Login/loginController')
 
-class OptionsController{
-     
-    static async addEmail(req, res){
-        try{
-            const {email, newEmail} = req.body 
-            const jsonResponse = await optionsService.addEmail(email, newEmail)
+class OptionsController {
+    static async addEmail(req, res) {
+        try {
+            const { email, newEmail } = req.body
+            const jsonResponse = await OptionsService.addEmail(email, newEmail)
             res.status(jsonResponse.resCode).json(jsonResponse)
         } catch (error) {
             res.status(HttpCodes.INTERNAL_SERVER_ERROR).json({ "error": error })
@@ -17,10 +17,10 @@ class OptionsController{
     }
     static async sendDeletionMail(req, res) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader.split(' ')[1];
+            const token = req.cookies.accessToken;
             const decodedToken = jwt.decode(token);
             const user = decodedToken.user;
+            console.log(user);
             const jsonResponse = await OptionsService.sendDeletionMail(user);
             res.status(jsonResponse.resCode).json(jsonResponse)
         } catch (error) {
@@ -31,8 +31,7 @@ class OptionsController{
     //daca un token a fost pasat in headerul requestului.
     static async logoutUser(req, res) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader.split(' ')[1];
+            const token = req.cookies.accessToken;
             const decodedToken = jwt.decode(token);
             const user = decodedToken.user;
             const result = await UserService.getIdByEmail(user);
@@ -40,11 +39,10 @@ class OptionsController{
             console.log(uid);
             TokenBlackListHandler.addToBlacklist(user, token);
             UserService.deleteLoggedOutUser(uid);
-            res.json({ message: 'Logout successful' });
+            res.clearCookie('refreshToken').clearCookie('accessToken').json({ message: 'Logout successful' });
         } catch (error) {
             res.status(HttpCodes.INTERNAL_SERVER_ERROR).json({ "error": error })
         }
-
     }
 }
 module.exports = OptionsController;
