@@ -1,6 +1,7 @@
 const comment = require("./../models/commentModel");
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const checkProfanity = require("./../utils/ProfanityDetector/profanityValidator");
 
 class commentServices {
     static async getAll(post_id) {
@@ -105,6 +106,14 @@ static async post(
         throw new Error("Invalid author_id");
     if (!description || description.length > 65535 || description.length == 0)
         throw new Error("Description entry too long/empty");
+
+    let profanityResult = await checkProfanity(description);
+    profanityResult = JSON.parse(profanityResult);
+
+    if(profanityResult.status){
+        throw new Error("Description contains profane words: " + profanityResult.words);
+    }
+    
     let parsedVotes;
     if (votes === undefined) {
         parsedVotes = 0;
@@ -162,6 +171,13 @@ static async post(
         if(!id) throw new Error("Invalid id entry");
         if(!description || description.length > 65535 || description.length == 0)
             throw new Error("Description entry too long/empty");
+
+        let profanityResult = await checkProfanity(description);
+        profanityResult = JSON.parse(profanityResult);
+
+        if(profanityResult.status){
+            throw new Error("Description contains profane words: " + profanityResult.words);
+        }
 
         let result = null;
         try {
