@@ -57,3 +57,19 @@ model Admin {
   email   String   @unique
   level   Int      @default(1)
 }
+
+model PostsVotes{
+  user_id Int
+  post_id Int
+  vote Int
+  created_at DateTime? @default(now())
+  @@unique([user_id, post_id])
+}
+
+model CommentsVotes{
+  user_id Int
+  comment_id Int
+  vote Int
+  created_at DateTime? @default(now())
+  @@unique([user_id, comment_id])
+}

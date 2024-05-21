@@ -79,7 +79,6 @@ class PostService {
         author_id,
         title,
         description,
-        votes,
         category,
         url
     ) {
@@ -110,15 +109,6 @@ class PostService {
             throw new Error("Description contains profane words: " + profanityResult.words);
         }
 
-        let parsedVotes;
-        if (votes === undefined) {
-            parsedVotes = 0;
-        } else if (isNaN(parseInt(votes))) {
-            throw new Error("Invalid votes");
-        } else {
-            parsedVotes = parseInt(votes);
-        }
-
         let results = null;
         try {
             results = await prisma.posts.create({
@@ -126,7 +116,7 @@ class PostService {
                     author_id: parseInt(author_id),
                     title: title,
                     description: description,
-                    votes: parsedVotes,
+                    votes: 0,
                     created_at: createdAt,
                     category: category,
                     comments_count: 0,
@@ -146,7 +136,7 @@ class PostService {
             author_id: parseInt(author_id),
             title: title,
             description: description,
-            votes: parsedVotes,
+            votes: 0,
             created_at: createdAt,
             category: category,
             comments_count: 0,
@@ -305,6 +295,7 @@ class PostService {
     }
 
     static async putVotes(
+        user_id,
         id,
         votes
     ) {
@@ -327,6 +318,121 @@ class PostService {
             if (isNaN(parseInt(votes))) {
                 throw new Error("Invalid votes");
             }
+
+            //verificam daca exista in postsVotes
+            console.log("aici1"); 
+            let resultVote = null;
+            try {
+                resultVote = await prisma.postsVotes.findMany({
+                    where: {
+                        user_id: parseInt(user_id),
+                        post_id: parseInt(result.id)
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            let difference = votes - result.votes;
+            if(difference == 2 && resultVote[0] != null) { //inseamna ca user-ul a sters dislike-ul si a dat like si nu mai facuse deja asta
+                if(resultVote[0].vote ==-1){
+
+                    //trebuie update pe campul de vote in valoarea opusa
+                    let results = null;
+                    try {
+                        results = await prisma.postsVotes.updateMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id)
+                            },
+                            data: {
+                                vote: 1
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else throw new Error("Invalid vote entry - a like was already made");
+                
+            }  
+            else if(difference == -2 && resultVote[0] != null){ //inseamna ca user-ul a sters like-ul si a dat dislike si nu mai facuse deja asta
+                //trebuie update pe campul de vote in valoarea opusa
+                if(resultVote[0].vote ==1){
+                    let results = null;
+                    try {
+                        results = await prisma.postsVotes.updateMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id)
+                            },
+                            data: {
+                                vote: -1
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else throw new Error("Invalid vote entry - a dislike was already made");
+                      
+            }  
+            else if(difference == 1 || difference == -1) { //inseamna ca user-ul a dat dis/like sau si-a sters dis/like-ul
+
+                if(resultVote[0] == null) { //daca nu exista deja in tabel, a dat dis/like, trebuie facut insert 
+
+                    console.log("aici3");
+                    let results = null;
+                    try {
+                        results = await prisma.postsVotes.create({
+                            data: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id),
+                                vote: difference
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else if( (difference == 1 && resultVote[0].vote == 1) || (difference == -1 && resultVote[0].vote == -1) ){ //vrea sa dea iar dis/like dar a dat deja
+                    throw new Error("A like/dislike was already made by this user");
+                } 
+                else { 
+                    console.log("aici");
+                    //exista in tabel -> doar si a sters like-ul 
+                    //facem delete din postsVotes
+                    let deleteRow = null;
+                    try {
+                        deleteRow = await prisma.postsVotes.deleteMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id),
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                }
+
+            }
+            else throw new Error("Invalid vote entry - cannot deduce user behaviour");
 
             let results = null;
             try {

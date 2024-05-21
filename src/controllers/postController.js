@@ -50,7 +50,7 @@ class PostController {
                 return res.status(500).json({ "status": "err", "message": err.message });
             }
 
-            const { id, title, description, votes, category } = req.body;
+            const { user_id, id, title, description, votes, category } = req.body;
             const file = req.file;
 
             try {
@@ -59,7 +59,7 @@ class PostController {
                 } else if (description !== undefined && title == undefined && votes == undefined && category == undefined && file == undefined) {
                     await postServices.putDescription(id, description);
                 } else if (votes !== undefined && title == undefined && description == undefined && category == undefined && file == undefined) {
-                    await postServices.putVotes(id, votes);
+                    await postServices.putVotes(user_id, id, votes);
                 } else if (votes == undefined && title == undefined && description == undefined && category !== undefined && file == undefined) {
                     await postServices.putCategory(id, category);
                 } else if (votes == undefined && title == undefined && description == undefined && category == undefined && file != undefined) {
