@@ -60,7 +60,7 @@ async function login(req, res) {
 				return;
 			}
 			const uid = result.uid;
-			const username = await randomUsernames.generateUsername();
+			const username = await randomUsernames.generate();
 			const user = {
 				uid: uid,
 				username: username,
