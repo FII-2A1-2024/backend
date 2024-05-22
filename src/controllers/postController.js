@@ -2,7 +2,12 @@ const postServices = require("./../services/postServices");
 const multer = require('multer');
 const upload = multer({ dest: 'uploads.local/' });
 const { uploadToS3, deleteFromS3 } = require('./../utils/AWS');
+const jwt = require("jsonwebtoken");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const fs = require('fs');
+const { log } = require("console");
 
 class PostController {
     static async get(req, res) {
@@ -22,13 +27,17 @@ class PostController {
             res.status(500).json({ "status":"err", "message": error.message });
         }
     }
-    static async post(req, res) {
+    static async post(req, res) {   
+        const authHeader = req.headers['authorization'];
+        const token = authHeader.split(' ')[1];
+        const decodedToken = jwt.decode(token);
+
         upload.single('file')(req, res, async function(err) {
             if (err) {
                 return res.status(500).json({ "status": "err", "message": err.message });
             }
     
-            const { author_id, title, description, votes, category } = req.body;
+            const {author_id, username, title, description, votes, category } = req.body;
             const file = req.file;
 
             try {
@@ -37,11 +46,24 @@ class PostController {
                     url = await uploadToS3(file);
                     fs.unlinkSync(file.path);
                 }
-                const post = await postServices.post(author_id, title, description, votes, category, url);
+
+                const users = await prisma.user.findMany({
+                    where: {
+                      emailPrimary: decodedToken.user,
+                    },
+                  });
+          
+                  const user = users.length > 0 ? users[0] : null;
+                  console.log(user);
+                  if (!user) {
+                    return res.status(404).json({ "status": "err", "message": "User not found" });
+                  }
+                
+                const post = await postServices.post(author_id, user.uid, username, title, description, votes, category, url);
                 res.status(200).json({ "status": "ok", post });
             } catch (error) {
                 res.status(500).json({ "status": "err", "message": error.message });
-            }
+            } 
         });
     }
     static async put(req, res) {
