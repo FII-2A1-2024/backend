@@ -27,6 +27,7 @@ class commentServices {
                 const receivedCommentForAPost = new comment(
                     result.id,
                     result.post_id,
+                    result.username,
                     result.parent_id,
                     result.author_id,
                     result.description,
@@ -60,8 +61,10 @@ class commentServices {
     
 static async post(
     post_id,
+    username,
     parent_id,
     author_id,
+    user_id,
     description,
     votes
 ) {
@@ -103,8 +106,12 @@ static async post(
 
     if (!author_id || isNaN(parseInt(author_id)) || parseInt(author_id) <= 0)
         throw new Error("Invalid author_id");
+    if (!user_id || isNaN(parseInt(user_id)) || parseInt(user_id) <= 0)
+        throw new Error("Invalid user_id from token");
     if (!description || description.length > 65535 || description.length == 0)
         throw new Error("Description entry too long/empty");
+    if(!username || username.length > 50 || username.length == 0)
+        throw new Error("Username too long/empty");
     let parsedVotes;
     if (votes === undefined) {
         parsedVotes = 0;
@@ -114,11 +121,16 @@ static async post(
         parsedVotes = parseInt(votes);
     }
 
+    if(uid !== author_id){
+        throw new Error("User_id and author_id not equal");
+    }
+
     let results = null;
     try {
         results = await prisma.comments.create({
             data: {
                 post_id: post_id,
+                username: username,
                 parent_id: parent_id,
                 author_id: author_id,
                 description: description,

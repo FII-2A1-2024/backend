@@ -54,6 +54,34 @@ class UserService {
 		return UserService.changePasswordByEmail(email, password);
 	}
 
+	async getSocketById(id) {
+		return UserService.SocketById(id);
+	}
+
+	static async SocketById(id) {
+		try {
+			const socket = await prisma.LoggedUsers.findFirst();
+			if (socket != null) {
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "User found",
+					socket: socket.socket,
+				};
+			}
+			return {
+				resCode: HttpCodes.USER_DOESNOT_EXIST,
+				message: "User not logged in",
+				socket: null,
+			};
+		} catch (error) {
+			console.error("Error retrieving user:", error);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error retrieving user",
+			};
+		}
+	}
+
 	static async changePasswordByEmail(email, password) {
 		try {
 			await prisma.user.update({
