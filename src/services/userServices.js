@@ -57,7 +57,11 @@ class UserService {
 
 	static async SocketById(id) {
 		try {
-			const socket = await prisma.LoggedUsers.findFirst();
+			const socket = await prisma.LoggedUsers.findFirst({
+				where: {
+					uid: Number.parseInt(id),
+				},
+			});
 			if (socket != null) {
 				return {
 					resCode: HttpCodes.SUCCESS,
