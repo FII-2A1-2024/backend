@@ -58,6 +58,10 @@ class UserService {
 		return UserService.SocketById(id);
 	}
 
+	async deleteLoggedOutUser(id) {
+		return UserService.deleteLoggedOutUserById(id);
+	}
+
 	static async SocketById(id) {
 		try {
 			const socket = await prisma.LoggedUsers.findFirst({
@@ -414,6 +418,24 @@ class UserService {
 				value: true,
 			};
 		}
+	}
+	static async deleteLoggedOutUserById(id) {
+			try {
+				await prisma.loggedUsers.deleteMany({
+					where: { uid: id, },
+				});
+				console.log(`Deleted user with id ${id}`);
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "Deleted user succesfuly",
+				};
+			} catch (error) {
+				console.error(`Error deleting entity -> ${error}`);
+				return {
+					resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+					message: "Error deleting user",
+				};
+	     	}	
 	}
 }
 
