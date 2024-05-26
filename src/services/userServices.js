@@ -67,6 +67,7 @@ class UserService {
 					resCode: HttpCodes.SUCCESS,
 					message: "User found",
 					socket: socket.socket,
+					username: socket.username,
 				};
 			}
 			return {
