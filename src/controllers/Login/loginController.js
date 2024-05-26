@@ -67,11 +67,15 @@ async function login(req, res) {
 				socket: socket,
 			};
 			userServices.logUserIn(user);
+			const isTeacher = await userServices.isTeacher(email);
+			const isAdmin = await userServices.isAdmin(uid);
 			res.send({
 				resCode: code,
 				token: token,
 				id: uid,
 				username: username,
+				teacher: isTeacher,
+				admin: isAdmin,
 				message: "The user has been succesfully logged in",
 			});
 		}
