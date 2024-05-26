@@ -4,7 +4,6 @@ const checkProfanity = require("./../utils/ProfanityDetector/profanityValidator"
 const Socket = require("./../utils/SocketIO");
 
 const userServices = require("./userServices");
-const { HttpRequest } = require("aws-sdk");
 
 class messagesService {
 	static async post(sender_id, receiver_id, content) {
