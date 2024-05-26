@@ -6,7 +6,6 @@ const Socket = require("./../utils/SocketIO");
 const userServices = require("./userServices");
 const { HttpRequest } = require("aws-sdk");
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class messagesService {
 	static async post(sender_id, receiver_id, content) {
 		if (!sender_id || isNaN(parseInt(sender_id)) || parseInt(sender_id) <= 0)
