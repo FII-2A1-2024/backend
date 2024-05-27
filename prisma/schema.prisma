@@ -68,3 +68,12 @@ model Teachers {
 model Email_profesori{
 email String @unique
 }
+
+model PostReports {
+  report_id          Int     @id @default(autoincrement())
+  post_id            Int
+  reason             String
+  id_reporter Int?
+  id_post_owner  Int?
+  stateOfReport      String  @default("verification in pending")
+}
