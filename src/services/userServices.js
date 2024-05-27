@@ -62,15 +62,17 @@ class UserService {
 		return UserService.deleteLoggedOutUserById(id);
 	}
 
-	async isAdmin(id) {
+	async isAdmin(email) {
 		try {
 			const admin = await prisma.admin.findUnique({
 				where: {
-					id: id,
+					email: email,
 				},
 			});
-			if (admin !== null) return true;
-			return false;
+			return {
+				isAdmin: admin !== null,
+				data: admin,
+			};
 		} catch (error) {
 			console.error("Error:", error);
 			return false;
