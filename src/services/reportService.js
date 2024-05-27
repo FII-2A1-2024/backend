@@ -18,7 +18,7 @@ async function reportPost(reporter, post_id, reason) {
         //console.log('postare '+JSON.stringify(post));
         
         if (!post) {
-            message = "post with id ${post_id}doesnt exist";
+            message = `post with id ${post_id} doesnt exist`;
             return message;
         }
 
