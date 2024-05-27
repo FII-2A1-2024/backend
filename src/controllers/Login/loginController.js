@@ -68,14 +68,17 @@ async function login(req, res) {
 			};
 			userServices.logUserIn(user);
 			const isTeacher = await userServices.isTeacher(email);
-			const isAdmin = await userServices.isAdmin(uid);
+			const isAdmin = await userServices.isAdmin(email);
+			let adminLevel = null;
+			if (isAdmin.isAdmin) adminLevel = isAdmin.data.level;
 			res.send({
 				resCode: code,
 				token: token,
 				id: uid,
 				username: username,
 				teacher: isTeacher,
-				admin: isAdmin,
+				admin: isAdmin.isAdmin,
+				adminLevel: adminLevel,
 				message: "The user has been succesfully logged in",
 			});
 		}
