@@ -62,6 +62,37 @@ class UserService {
 		return UserService.deleteLoggedOutUserById(id);
 	}
 
+	async isAdmin(email) {
+		try {
+			const admin = await prisma.admin.findUnique({
+				where: {
+					email: email,
+				},
+			});
+			return {
+				isAdmin: admin !== null,
+				data: admin,
+			};
+		} catch (error) {
+			console.error("Error:", error);
+			return false;
+		}
+	}
+
+	async isTeacher(email) {
+		try {
+			const teacher = await prisma.Teachers.findUnique({
+				where: {
+					email: email,
+				},
+			});
+			return teacher !== null;
+		} catch (error) {
+			console.error("Error:", error);
+			return;
+		}
+	}
+
 	static async SocketById(id) {
 		try {
 			const socket = await prisma.LoggedUsers.findFirst({
@@ -74,6 +105,7 @@ class UserService {
 					resCode: HttpCodes.SUCCESS,
 					message: "User found",
 					socket: socket.socket,
+					username: socket.username,
 				};
 			}
 			return {
@@ -140,11 +172,13 @@ class UserService {
 
 	static async insert(newUser) {
 		try {
-			const profesorCheckResult = await UserService.checkExistenceProfesor(newUser.username);
-	
+			const profesorCheckResult = await UserService.checkExistenceProfesor(
+				newUser.username,
+			);
+
 			const hashedPassword = generateHash(newUser.password);
 			const isProfesor = profesorCheckResult.value;
-	
+
 			//insert in user
 			const instance = await prisma.user.create({
 				data: {
@@ -155,15 +189,15 @@ class UserService {
 					verifiedEmail: 0,
 				},
 			});
-	
+
 			console.log(`Added user ${instance.emailPrimary}`);
-	
-			// daca userul e si prof, adaugare si in teachers 
+
+			// daca userul e si prof, adaugare si in teachers
 			if (isProfesor) {
 				const existingTeacher = await prisma.teachers.findUnique({
 					where: { email: newUser.username },
 				});
-	
+
 				if (!existingTeacher) {
 					const instanceProfesor = await prisma.teachers.create({
 						data: {
@@ -173,10 +207,12 @@ class UserService {
 					});
 					console.log(`Added professor ${instanceProfesor.email}`);
 				} else {
-					console.log(`Professor with email ${newUser.username} already  exists`);
+					console.log(
+						`Professor with email ${newUser.username} already  exists`,
+					);
 				}
 			}
-	
+
 			return {
 				resCode: HttpCodes.SUCCESS,
 				message: "Added user successfully",
@@ -189,7 +225,6 @@ class UserService {
 			};
 		}
 	}
-	
 
 	static async addUserInLoggedUsers(user) {
 		try {
@@ -221,7 +256,7 @@ class UserService {
 			});
 			await prisma.teachers.deleteMany({
 				where: { email: email },
-			}); //daca e prof 
+			}); //daca e prof
 			console.log(`Deleted user with email ${email}`);
 			return {
 				resCode: HttpCodes.SUCCESS,
@@ -420,22 +455,22 @@ class UserService {
 		}
 	}
 	static async deleteLoggedOutUserById(id) {
-			try {
-				await prisma.loggedUsers.deleteMany({
-					where: { uid: id, },
-				});
-				console.log(`Deleted user with id ${id}`);
-				return {
-					resCode: HttpCodes.SUCCESS,
-					message: "Deleted user succesfuly",
-				};
-			} catch (error) {
-				console.error(`Error deleting entity -> ${error}`);
-				return {
-					resCode: HttpCodes.INTERNAL_SERVER_ERROR,
-					message: "Error deleting user",
-				};
-	     	}	
+		try {
+			await prisma.loggedUsers.deleteMany({
+				where: { uid: id },
+			});
+			console.log(`Deleted user with id ${id}`);
+			return {
+				resCode: HttpCodes.SUCCESS,
+				message: "Deleted user succesfuly",
+			};
+		} catch (error) {
+			console.error(`Error deleting entity -> ${error}`);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error deleting user",
+			};
+		}
 	}
 }
 
