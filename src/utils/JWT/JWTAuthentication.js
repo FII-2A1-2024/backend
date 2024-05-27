@@ -18,26 +18,31 @@ async function authenticateToken(req, res, next) {
             if (err.name === 'TokenExpiredError') {
                 try {                
                     console.log("Verification successful,token refreshed,sending updated cookies to the client...");
+                    const cookieRefreshToken = req.cookies.refreshToken;
+                    const refreshToken = jwt.verify(cookieRefreshToken, process.env.JWT_REFRESH_KEY);
+                    if (refreshToken) {
+                        newAccessToken = generateAccessTokenHandler.generateAccessToken(username);
+                        const newDecodedToken = jwt.decode(newAccessToken)
+                        const newPayload = newDecodedToken;
+                        req.user = newPayload;
+                        console.log(req.user);
+                        const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
 
-                    newAccessToken = generateAccessTokenHandler.generateAccessToken(username);
-        
-                    const newDecodedToken = jwt.decode(newAccessToken)
-                    const newPayload = newDecodedToken;
-                    req.user = newPayload;
-                    console.log(req.user);
-                    const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
-                    
-                    res.status(200)
-                        .cookie('accessToken', newAccessToken, {
-                            httpOnly: true,
-                            secure: true,
-                            sameSite: 'Strict',
-                            maxAge: oneYearInMilliseconds
-                        })     
-                    next();
+                        res.status(200)
+                            .cookie('accessToken', newAccessToken, {
+                                httpOnly: true,
+                                secure: true,
+                                sameSite: 'Strict',
+                                maxAge: oneYearInMilliseconds
+                            });
+                        next();
+                    } else {
+                        return res.status(403).json({ message: "refresh token error" });
+                    }
                     
                 } catch (err) {
                     console.log(err);
+                    //de mutat logica de la refresh token pt stergerea userului delogat aici.
                     return res.status(403).json({ error: 'Forbidden: Could not refresh token' });
                 }
             } else {

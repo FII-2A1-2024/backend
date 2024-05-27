@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const postController = require("./../controllers/postController");
-const { authenticateToken, refreshTokenCheck } = require('../utils/JWT/JWTAuthentication')
+const { authenticateToken} = require('../utils/JWT/JWTAuthentication')
 
 router.get("/posts", postController.get);
 router.get("/posts/all", postController.getAll);

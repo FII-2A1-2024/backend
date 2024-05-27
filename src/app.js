@@ -19,9 +19,7 @@ const deleteAccountRoutes = require("./routes/deleteAccountRoutes");
 const searchRoute = require("./routes/searchRoute");
 const socketRoutes = require("./routes/socketRoutes");
 const jwt = require('jsonwebtoken')
-
-const refreshTokenRoutes = require("./routes/refreshTokenRoutes")
-const { authenticateToken, refreshTokenCheck,isUserTimedOut } = require("./utils/JWT/JWTAuthentication");
+const { authenticateToken,isUserTimedOut } = require("./utils/JWT/JWTAuthentication");
 
 app.use(cors({ origin: "*" }));
 app.use(cookieParser());
@@ -41,8 +39,7 @@ app
 	.use(deleteAccountRoutes)
 	.use(searchRoute)
 	.use(socketRoutes)
-	.use(refreshTokenRoutes)
-	.get('/protected', refreshTokenCheck, authenticateToken, isUserTimedOut, (req, res) => {
+	.get('/protected', authenticateToken, isUserTimedOut, (req, res) => {
 		const token = req.cookies.accessToken;
 		const decodedTOken = jwt.decode(token);
 		console.log(decodedTOken)
