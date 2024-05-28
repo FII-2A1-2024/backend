@@ -49,26 +49,38 @@ class AdminService {
 
     static async deletePostByID(post_id, reason) {
         try {
+            //trimit si email
+            const post = await prisma.posts.findUnique({
+                where: { id: post_id }
+            });
+            if(!post) return "post wasnt found";
+            const existingUser = await prisma.user.findUnique({
+                where: { uid: post.author_id }
+            });
+            const existingUser_email=existingUser.emailPrimary;
+
+            sendEmail(existingUser_email,"Your post was deleted", `Your post was deleted because ${reason}`);
+                
             await PostServices.delete(post_id);
             const message = `Post with ID ${post_id} has been successfully deleted for reason: ${reason}`;
-
             return message;
         } catch (error) {
             console.error('Eroare la preluarea datelor:', error);
             throw error;
         }
     }
-    static async sendWarningToUser(user_email, warning) {
+    static async sendWarningToUser(user_id, warning) {
         try {
             let message = "";
             const existingUser = await prisma.user.findUnique({
-                where: { emailPrimary: user_email }
+                where: { uid: user_id }
             });
 
             if (!existingUser) {
-                message = `User with ID ${user_email} doesn't exist.`;
+                message = `User with ID ${user_id} doesn't exist.`;
             }
             else { 
+                const user_email=existingUser.emailPrimary;
                 sendEmail(user_email,"Warning", warning);
                 message = "warning sent";
              }
@@ -84,23 +96,23 @@ class AdminService {
             let message = "";
             //cauta in tabela linia cu report_id si inlocuieste state cu wanted state
             //se presupune ca ajung emailuri corecte aici
-            const existingReport = await prisma.report.findUnique({
+            const existingReport = await prisma.postReports.findUnique({
                 where: { report_id: report_id }
             });
 
             if (!existingReport) {
                 message = `Report with ID ${report_id} doesn't exist.`;
             }
-            else if (existingReport.state !== "verification in pending") {
+            else if (existingReport.stateOfReport !== "verification in pending") {
                 message = `Report with ID ${report_id} was already reviewed.`;
             }
             else {
                 //returneaza un mesaj de confirmare
-                const updatedReport = await prisma.report.update({
+                const updatedReport = await prisma.postReports.update({
                     where: { report_id: report_id },
-                    data: { state: wantedState }
+                    data: { stateOfReport: wantedState }
                 });
-                console.log(updatedReport);
+                //console.log(updatedReport);
                 message = `State of report with ID ${report_id} is now ${wantedState}.`;
             }
             return message;
@@ -113,7 +125,7 @@ class AdminService {
 
     static async viewAllReports() {
         try {
-            const allReports = await prisma.report.findMany();
+            const allReports = await prisma.postReports.findMany();
             /*afisam fiecare report din db 
             allReports.forEach(report => {
                 console.log(`ID: ${report.report_id}, Reporter Email: ${report.reporter_email}, Reported Email: ${report.reported_email}, Reason: ${report.reason}, State: ${report.state}`);

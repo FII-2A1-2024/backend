@@ -84,10 +84,10 @@ class AdminController {
     static async evaluateReport(req, res) {
         try {
             if (!req.body.report_id || !req.body.state) {
-                return res.status(400).send("report_id and state fields are missing from the body of the req");
+                return res.status(400).json("report_id and state fields are missing from the body of the req");
             }
             if (req.body.state != 'report rejected' && req.body.state != 'report accepted') {
-                return res.status(400).send("state can be <report accepted> or <report rejected> ");
+                return res.status(400).json("state can be <report accepted> or <report rejected> ");
             }
             const report_id = req.body.report_id;
             const wantedState = req.body.state;
@@ -99,11 +99,11 @@ class AdminController {
     }
     static async sendWarning(req, res) {
         try {
-            if (!req.body.user_email|| !req.body.warning) {
+            if (!req.body.user_id|| !req.body.warning) {
                 return res.status(400).send("user_id and warning fields are missing from the body of the req");
             }
             
-            const confirmationForSendingWarning = await adminServices.sendWarning(req.body.user_email,req.body.warning);
+            const confirmationForSendingWarning = await adminServices.sendWarning(req.body.user_id,req.body.warning);
             res.status(200).json(confirmationForSendingWarning);
         } catch (error) {
             res.status(500).send("Error occured: " + error);

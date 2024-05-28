@@ -16,13 +16,10 @@ async function signUp(req, res){
             //emailul e invalid, nu are sintaxa buna
             code = HttpCodes.INVALID_EMAIL
             console.log("Nu introducem userul in baza de date, are email gresit");
-            message = "Invalid email format! Example of accepted syntax: example.example@student.uaic.ro"
         } else{
-            result = (await signUpService.createUser(username, password)) 
-            code = result.code
-            message = result.message
+            code = await signUpService.createUser(username, password)
         }
-        res.send({resCode: code, message: message})
+        res.send({resCode: code})
     } catch (error){
         res.status(500).send({error : error.message})
     }

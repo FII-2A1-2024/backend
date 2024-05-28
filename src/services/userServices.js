@@ -54,24 +54,6 @@ class UserService {
         return UserService.makeProf(email)
     }
 
-    static async insert(newUser){
-        try{
-            const hashedPassword = generateHash(newUser.password);
-            const instance = await prisma.user.create({
-                data: {
-                    emailPrimary: newUser.username,
-                    password: hashedPassword,
-                    emailSecondary : "null",
-                    profesorFlag : 0,
-                    verifiedEmail : 0
-                }
-            });
-
-            console.log("Added user " + instance.emailPrimary);
-        } catch(error){
-            console.error("Error inserting user -> " + error);
-        }
-    }
 
 	async logUserIn(user) {
 		return UserService.addUserInLoggedUsers(user);
@@ -229,7 +211,7 @@ class UserService {
 					const instanceProfesor = await prisma.teachers.create({
 						data: {
 							email: newUser.username,
-							materie: " ",
+							materie: "nu stim..",
 						},
 					});
 					console.log(`Added professor ${instanceProfesor.email}`);

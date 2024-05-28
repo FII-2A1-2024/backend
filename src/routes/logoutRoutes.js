@@ -8,6 +8,6 @@ router
     .get("/", (req, res) => {
         res.send({ data: "User will add their secondary email" })
     })
-    .post("/logout", authenticateToken.authenticateToken,OptionsController.logoutUser);
+    .post("/logout", authenticateToken,OptionsController.logoutUser);
 
 module.exports = router
