@@ -5,6 +5,7 @@ const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const postFollowRoutes = require("./routes/postFollowRoutes");
 const messagesRoutes = require("./routes/messagesRoutes");
+const likeRoutes = require("./routes/likeRoutes");
 
 const adminRoutes = require("./routes/Admin&UserRoutes/adminRoutes");
 const isUser = require("./utils/Middleware/isUser");
@@ -36,5 +37,6 @@ app
 	.use(deleteAccountRoutes)
 	.use(searchRoute)
 	.use(reportRoute)
+	.use(likeRoutes)
 	.use(socketRoutes);
 module.exports = app;
