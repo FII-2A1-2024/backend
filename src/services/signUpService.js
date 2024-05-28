@@ -26,7 +26,7 @@ async function createUser(username, password) {
 				//verify email RIGHT HERE
 				const verificationToken =
 					jwtHandler.generateVerificationToken(username);
-				const verificationLink = `https://octavianregatun.com/api/signup/verify?token=${verificationToken}`;
+				const verificationLink = `https://dev.octavianregatun.com/api/signup/verify?token=${verificationToken}`;
 				console.log(verificationLink);
 				console.log("Am trecut pe aici")
 				EmailSender.sendEmail(username, verificationLink, process.env.TEMPLATE_ID);
