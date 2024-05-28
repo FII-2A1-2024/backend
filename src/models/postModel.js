@@ -2,6 +2,7 @@ class Post {
     constructor(
         id,
         author_id,
+        username,
         title,
         description,
         votes,
@@ -12,6 +13,7 @@ class Post {
     ) {
         this.id = id;
         this.author_id = author_id;
+        this.username = username;
         this.title = title;
         this.description = description;
         this.votes = votes;
