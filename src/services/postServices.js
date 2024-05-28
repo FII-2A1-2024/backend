@@ -320,7 +320,6 @@ class PostService {
             }
 
             //verificam daca exista in postsVotes
-            console.log("aici1"); 
             let resultVote = null;
             try {
                 resultVote = await prisma.postsVotes.findMany({
@@ -391,7 +390,6 @@ class PostService {
 
                 if(resultVote[0] == null) { //daca nu exista deja in tabel, a dat dis/like, trebuie facut insert 
 
-                    console.log("aici3");
                     let results = null;
                     try {
                         results = await prisma.postsVotes.create({
@@ -413,7 +411,6 @@ class PostService {
                     throw new Error("A like/dislike was already made by this user");
                 } 
                 else { 
-                    console.log("aici");
                     //exista in tabel -> doar si a sters like-ul 
                     //facem delete din postsVotes
                     let deleteRow = null;

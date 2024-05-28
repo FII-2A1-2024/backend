@@ -35,12 +35,12 @@ class CommentController {
         }
     }
     static async put(req, res) {
-        const { id, description, votes } = req.body;
+        const { user_id, id, description, votes } = req.body;
         try {
             if (description !== undefined && votes == undefined) {
                 await commentServices.putDescription(id, description);
             } else if (votes !== undefined && description == undefined) {
-                await commentServices.putVotes(id, votes);
+                await commentServices.putVotes(user_id, id, votes);
             } else {
                 throw new Error("Too many or few parameters");
             }
