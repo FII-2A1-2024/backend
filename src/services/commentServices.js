@@ -1,12 +1,13 @@
 const comment = require("./../models/commentModel");
+const fakeComment = require("./../models/fakeCommentModel");
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const checkProfanity = require("./../utils/ProfanityDetector/profanityValidator");
 
 class commentServices {
     static async getAll(post_id) {
-        if(!post_id) throw new Error("Invalid id entry");
-
+        if (!post_id) throw new Error("Invalid id entry");
+    
         let results = null;
         try {
             results = await prisma.comments.findMany({
@@ -19,30 +20,48 @@ class commentServices {
         } finally {
             await prisma.$disconnect();
         }
-
-        const receivedCommentsForAPost = [];
-        if(results != null && results.length > 0){
-            results.forEach((result) => {
-                const createdAtDate = new Date(result.created_at);
-                const createdAtString = createdAtDate.toISOString();
-                const receivedCommentForAPost = new comment(
-                    result.id,
-                    result.post_id,
-                    result.parent_id,
-                    result.author_id,
-                    result.description,
-                    result.votes,
-                    createdAtString
-                );
-                receivedCommentsForAPost.push(receivedCommentForAPost);
-            });
-        }  
-        else throw new Error("Post with the given id doesn't have any comments");
-
+    
+        if (results == null || results.length === 0) {
+            throw new Error("Post with the given id doesn't have any comments");
+        }
+    
+        const receivedCommentsForAPost = await Promise.all(results.map(async (result) => {
+            let user = null;
+            try {
+                user = await prisma.user.findUnique({
+                    where: {
+                        uid: parseInt(result.author_id),
+                    },
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+    
+            let is_teacher = false;
+            if (user != null && parseInt(user.profesorFlag) == 1)
+                is_teacher = true;
+    
+            const createdAtDate = new Date(result.created_at);
+            const createdAtString = createdAtDate.toISOString();
+            return new fakeComment(
+                result.id,
+                result.post_id,
+                result.username,
+                result.parent_id,
+                result.author_id,
+                result.description,
+                result.votes,
+                createdAtString,
+                is_teacher
+            );
+        }));
+    
         const nestedJSONArray = receivedCommentsForAPost
-        .filter(comment => comment.parent_id === -1)
-        .map(comment => this.buildNestedJSON(receivedCommentsForAPost, comment));
-
+            .filter(comment => comment.parent_id === -1)
+            .map(comment => this.buildNestedJSON(receivedCommentsForAPost, comment));
+    
         return nestedJSONArray;
     }
 
@@ -61,8 +80,10 @@ class commentServices {
     
 static async post(
     post_id,
+    username,
     parent_id,
     author_id,
+    user_id,
     description,
     votes
 ) {
@@ -104,8 +125,12 @@ static async post(
 
     if (!author_id || isNaN(parseInt(author_id)) || parseInt(author_id) <= 0)
         throw new Error("Invalid author_id");
+    if (!user_id || isNaN(parseInt(user_id)) || parseInt(user_id) <= 0)
+        throw new Error("Invalid user_id from token");
     if (!description || description.length > 65535 || description.length == 0)
         throw new Error("Description entry too long/empty");
+    if(!username || username.length > 50 || username.length == 0)
+        throw new Error("Username too long/empty");
 
     let profanityResult = await checkProfanity(description);
     profanityResult = JSON.parse(profanityResult);
@@ -123,11 +148,16 @@ static async post(
         parsedVotes = parseInt(votes);
     }
 
+    if(user_id !== author_id){
+        throw new Error("User_id and author_id not equal");
+    }
+
     let results = null;
     try {
         results = await prisma.comments.create({
             data: {
                 post_id: post_id,
+                username: username,
                 parent_id: parent_id,
                 author_id: author_id,
                 description: description,

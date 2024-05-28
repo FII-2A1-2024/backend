@@ -1,3 +1,4 @@
+//FU$K THIS TOO
 class Comment {
     constructor(
         id,
@@ -7,7 +8,8 @@ class Comment {
         author_id,
         description,
         votes,
-        created_at
+        created_at,
+        is_teacher
     ) {
         this.id = id;
         this.post_id = post_id;
@@ -17,6 +19,7 @@ class Comment {
         this.description = description;
         this.votes = votes;
         this.created_at = created_at;
+        this.is_teacher = is_teacher;
     }
 }
 

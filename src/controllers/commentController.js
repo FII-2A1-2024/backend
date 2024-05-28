@@ -1,4 +1,7 @@
 const commentServices = require("./../services/commentServices");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const jwt = require("jsonwebtoken");
 
 class CommentController {
     static async getAll(req, res) {
@@ -11,12 +14,30 @@ class CommentController {
         }
     }
     static async post(req, res) {
-        const { post_id, parent_id, author_id, description, votes } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader.split(' ')[1];
+        const decodedToken = jwt.decode(token);
+
+        const { post_id, username, parent_id, author_id, description, votes } = req.body;
         try {
+            const users = await prisma.user.findMany({
+                where: {
+                  emailPrimary: decodedToken.user,
+                },
+              });
+      
+              const user = users.length > 0 ? users[0] : null;
+              console.log(user);
+              if (!user) {
+                return res.status(404).json({ "status": "err", "message": "User not found" });
+              }
+
             const comment_id = await commentServices.post(
                 post_id,
+                username,
                 parent_id,
                 author_id,
+                user.uid,
                 description,
                 votes
             );

@@ -1,3 +1,4 @@
+//if you read this fu@k you and f$*k me too
 class Post {
     constructor(
         id,
@@ -9,7 +10,8 @@ class Post {
         created_at,
         category,
         comments_count,
-        url
+        url,
+        is_teacher
     ) {
         this.id = id;
         this.author_id = author_id;
@@ -21,6 +23,7 @@ class Post {
         this.category = category;
         this.comments_count = comments_count;
         this.url = url;
+        this.is_teacher = is_teacher;
     }
 }
 

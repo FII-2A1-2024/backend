@@ -22,6 +22,9 @@ class UserService {
 	async existsInDB(email) {
 		return UserService.checkExistence(email);
 	}
+	async existsInProfesorTable(email) {
+		return UserService.checkExistenceProfesor(email);
+	}
 
 	async isVerifed(email) {
 		return UserService.checkVerification(email);
@@ -49,6 +52,74 @@ class UserService {
 
 	async changePassword(email, password) {
 		return UserService.changePasswordByEmail(email, password);
+	}
+
+	async getSocketById(id) {
+		return UserService.SocketById(id);
+	}
+
+	async deleteLoggedOutUser(id) {
+		return UserService.deleteLoggedOutUserById(id);
+	}
+
+	async isAdmin(email) {
+		try {
+			const admin = await prisma.admin.findUnique({
+				where: {
+					email: email,
+				},
+			});
+			return {
+				isAdmin: admin !== null,
+				data: admin,
+			};
+		} catch (error) {
+			console.error("Error:", error);
+			return false;
+		}
+	}
+
+	async isTeacher(email) {
+		try {
+			const teacher = await prisma.Teachers.findUnique({
+				where: {
+					email: email,
+				},
+			});
+			return teacher !== null;
+		} catch (error) {
+			console.error("Error:", error);
+			return;
+		}
+	}
+
+	static async SocketById(id) {
+		try {
+			const socket = await prisma.LoggedUsers.findFirst({
+				where: {
+					uid: Number.parseInt(id),
+				},
+			});
+			if (socket != null) {
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "User found",
+					socket: socket.socket,
+					username: socket.username,
+				};
+			}
+			return {
+				resCode: HttpCodes.USER_DOESNOT_EXIST,
+				message: "User not logged in",
+				socket: null,
+			};
+		} catch (error) {
+			console.error("Error retrieving user:", error);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error retrieving user",
+			};
+		}
 	}
 
 	static async changePasswordByEmail(email, password) {
@@ -101,21 +172,50 @@ class UserService {
 
 	static async insert(newUser) {
 		try {
+			const profesorCheckResult = await UserService.checkExistenceProfesor(
+				newUser.username,
+			);
+
 			const hashedPassword = generateHash(newUser.password);
+			const isProfesor = profesorCheckResult.value;
+
+			//insert in user
 			const instance = await prisma.user.create({
 				data: {
 					emailPrimary: newUser.username,
 					password: hashedPassword,
 					emailSecondary: "null",
-					profesorFlag: 0,
+					profesorFlag: isProfesor ? 1 : 0,
 					verifiedEmail: 0,
 				},
 			});
 
 			console.log(`Added user ${instance.emailPrimary}`);
+
+			// daca userul e si prof, adaugare si in teachers
+			if (isProfesor) {
+				const existingTeacher = await prisma.teachers.findUnique({
+					where: { email: newUser.username },
+				});
+
+				if (!existingTeacher) {
+					const instanceProfesor = await prisma.teachers.create({
+						data: {
+							email: newUser.username,
+							materie: " ",
+						},
+					});
+					console.log(`Added professor ${instanceProfesor.email}`);
+				} else {
+					console.log(
+						`Professor with email ${newUser.username} already  exists`,
+					);
+				}
+			}
+
 			return {
 				resCode: HttpCodes.SUCCESS,
-				message: "Added user succesfully",
+				message: "Added user successfully",
 			};
 		} catch (error) {
 			console.error(`Error inserting user -> ${error}`);
@@ -128,14 +228,14 @@ class UserService {
 
 	static async addUserInLoggedUsers(user) {
 		try {
-			const instance = await prisma.LoggedUsers.create({
+			const instance = await prisma.loggedUsers.create({
 				data: {
 					uid: user.uid,
 					username: user.username,
 					socket: user.socket,
 				},
 			});
-			console.log(`Added user ${instance.emailPrimary}`);
+			console.log(`Added user ${instance.username}`);
 			return {
 				resCode: HttpCodes.SUCCESS,
 				message: "Logged in user succesfully",
@@ -154,6 +254,9 @@ class UserService {
 			await prisma.user.deleteMany({
 				where: { emailPrimary: email },
 			});
+			await prisma.teachers.deleteMany({
+				where: { email: email },
+			}); //daca e prof
 			console.log(`Deleted user with email ${email}`);
 			return {
 				resCode: HttpCodes.SUCCESS,
@@ -211,6 +314,33 @@ class UserService {
 			return {
 				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
 				message: "Error retrieving user",
+				value: false,
+			};
+		}
+	}
+	static async checkExistenceProfesor(email) {
+		try {
+			const profesor = await prisma.Email_profesori.findUnique({
+				where: {
+					email: email,
+				},
+			});
+			if (profesor !== null)
+				return {
+					resCode: HttpCodes.SUCCESS,
+					message: "Profesor exists",
+					value: profesor !== null,
+				};
+			return {
+				resCode: HttpCodes.USER_DOESNOT_EXIST,
+				message: "professor with this name does not exist",
+				value: profesor !== null,
+			};
+		} catch (error) {
+			console.error(`Error retrieving prof -> ${error}`);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error retrieving prof",
 				value: false,
 			};
 		}
@@ -321,6 +451,24 @@ class UserService {
 				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
 				message: "Error checking second email",
 				value: true,
+			};
+		}
+	}
+	static async deleteLoggedOutUserById(id) {
+		try {
+			await prisma.loggedUsers.deleteMany({
+				where: { uid: id },
+			});
+			console.log(`Deleted user with id ${id}`);
+			return {
+				resCode: HttpCodes.SUCCESS,
+				message: "Deleted user succesfuly",
+			};
+		} catch (error) {
+			console.error(`Error deleting entity -> ${error}`);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error deleting user",
 			};
 		}
 	}
