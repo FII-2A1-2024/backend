@@ -21,12 +21,14 @@ async function createUser(username, password) {
 				console.log("Exista deja in BD");
 				code = HttpCodes.USER_ALREADY_EXISTS;
 			} else {
+				console.log("Am intrat aici");
 				code = HttpCodes.SUCCESS;
 				//verify email RIGHT HERE
 				const verificationToken =
 					jwtHandler.generateVerificationToken(username);
-				const verificationLink = `http://localhost:${process.env.SERVER_PORT}/signup/verify?token=${verificationToken}`;
+				const verificationLink = `https://dev.octavianregatun.com/api/signup/verify?token=${verificationToken}`;
 				console.log(verificationLink);
+				console.log("Am trecut pe aici")
 				EmailSender.sendEmail(username, verificationLink, process.env.TEMPLATE_ID);
 				return UserService.addUser(newUser).resCode;
 			}
