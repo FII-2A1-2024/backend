@@ -84,8 +84,7 @@ static async post(
     parent_id,
     author_id,
     user_id,
-    description,
-    votes
+    description
 ) {
     const createdAt = new Date();
 
@@ -138,17 +137,8 @@ static async post(
     if(profanityResult.status){
         throw new Error("Description contains profane words: " + profanityResult.words);
     }
-    
-    let parsedVotes;
-    if (votes === undefined) {
-        parsedVotes = 0;
-    } else if (isNaN(parseInt(votes))) {
-        throw new Error("Invalid votes");
-    } else {
-        parsedVotes = parseInt(votes);
-    }
 
-    if(user_id !== author_id){
+    if(parseInt(user_id) !== parseInt(author_id)){
         throw new Error("User_id and author_id not equal");
     }
 
@@ -161,7 +151,7 @@ static async post(
                 parent_id: parent_id,
                 author_id: author_id,
                 description: description,
-                votes: parsedVotes,
+                votes: 0,
                 created_at: createdAt
             }
         });

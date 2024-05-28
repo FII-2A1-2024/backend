@@ -153,7 +153,7 @@ class PostService {
 		if (url != null && (url.length > 255 || url.length == 0))
 			throw new Error("URL entry too long/empty");
 
-		if (uid !== author_id) {
+		if (parseInt(uid) !== parseInt(author_id)) {
 			throw new Error("User_id and author_id not equal");
 		}
 

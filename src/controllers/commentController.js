@@ -18,7 +18,7 @@ class CommentController {
         const token = authHeader.split(' ')[1];
         const decodedToken = jwt.decode(token);
 
-        const { post_id, username, parent_id, author_id, description, votes } = req.body;
+        const { post_id, username, parent_id, author_id, description} = req.body;
         try {
             const users = await prisma.user.findMany({
                 where: {
@@ -38,8 +38,7 @@ class CommentController {
                 parent_id,
                 author_id,
                 user.uid,
-                description,
-                votes
+                description
             );
             res.status(200).json({"status":"ok", comment_id});
         } catch (error) {
