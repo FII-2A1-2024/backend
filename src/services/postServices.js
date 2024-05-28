@@ -1,4 +1,5 @@
 const post = require("./../models/postModel");
+const fakePost = require("./../models/fakePostModels");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const commentServices = require("./commentServices");
@@ -22,9 +23,26 @@ class PostService {
 		}
 
 		if (result != null) {
+			let user = null;
+			try {
+				user = await prisma.user.findUnique({
+					where: {
+						uid: parseInt(result.author_id),
+					},
+				});
+			} catch (error) {
+				await prisma.$disconnect();
+			} finally {
+				await prisma.$disconnect();
+			}
+
+			let is_teacher = false;
+			if(user != null && parseInt(user.profesorFlag) == 1)
+				is_teacher = true;
+
 			const createdAtDate = new Date(result.created_at);
 			const createdAtString = createdAtDate.toISOString();
-			const receivedPost = new post(
+			const receivedPost = new fakePost(
 				result.id,
 				result.author_id,
 				result.username,
@@ -35,6 +53,7 @@ class PostService {
 				result.category,
 				result.comments_count,
 				result.url,
+				is_teacher
 			);
 			return receivedPost;
 		} else {
@@ -65,11 +84,27 @@ class PostService {
 		}
 
 		if (results != null && results.length > 0) {
-			const receivedPosts = [];
-			results.forEach((result) => {
+			const receivedPosts = await Promise.all(results.map(async (result) => {
+				let user = null;
+				try {
+					user = await prisma.user.findUnique({
+						where: {
+							uid: parseInt(result.author_id),
+						},
+					});
+				} catch (error) {
+					await prisma.$disconnect();
+				} finally {
+					await prisma.$disconnect();
+				}
+	
+				let is_teacher = false;
+				if (user != null && parseInt(user.profesorFlag) == 1)
+					is_teacher = true;
+	
 				const createdAtDate = new Date(result.created_at);
 				const createdAtString = createdAtDate.toISOString();
-				const receivedPost = new post(
+				const receivedPost = new fakePost(
 					result.id,
 					result.author_id,
 					result.username,
@@ -80,9 +115,12 @@ class PostService {
 					result.category,
 					result.comments_count,
 					result.url,
+					is_teacher
 				);
-				receivedPosts.push(receivedPost);
-			});
+	
+				return receivedPost;
+			}));
+			
 			return receivedPosts;
 		} else {
 			throw new Error("No posts found in the database");
