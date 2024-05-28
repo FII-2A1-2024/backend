@@ -1,4 +1,7 @@
 const commentServices = require("./../services/commentServices");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const jwt = require("jsonwebtoken");
 
 class CommentController {
     static async getAll(req, res) {

@@ -1,11 +1,12 @@
 const comment = require("./../models/commentModel");
+const fakeComment = require("./../models/fakeCommentModel");
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class commentServices {
     static async getAll(post_id) {
-        if(!post_id) throw new Error("Invalid id entry");
-
+        if (!post_id) throw new Error("Invalid id entry");
+    
         let results = null;
         try {
             results = await prisma.comments.findMany({
@@ -18,31 +19,48 @@ class commentServices {
         } finally {
             await prisma.$disconnect();
         }
-
-        const receivedCommentsForAPost = [];
-        if(results != null && results.length > 0){
-            results.forEach((result) => {
-                const createdAtDate = new Date(result.created_at);
-                const createdAtString = createdAtDate.toISOString();
-                const receivedCommentForAPost = new comment(
-                    result.id,
-                    result.post_id,
-                    result.username,
-                    result.parent_id,
-                    result.author_id,
-                    result.description,
-                    result.votes,
-                    createdAtString
-                );
-                receivedCommentsForAPost.push(receivedCommentForAPost);
-            });
-        }  
-        else throw new Error("Post with the given id doesn't have any comments");
-
+    
+        if (results == null || results.length === 0) {
+            throw new Error("Post with the given id doesn't have any comments");
+        }
+    
+        const receivedCommentsForAPost = await Promise.all(results.map(async (result) => {
+            let user = null;
+            try {
+                user = await prisma.user.findUnique({
+                    where: {
+                        uid: parseInt(result.author_id),
+                    },
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+    
+            let is_teacher = false;
+            if (user != null && parseInt(user.profesorFlag) == 1)
+                is_teacher = true;
+    
+            const createdAtDate = new Date(result.created_at);
+            const createdAtString = createdAtDate.toISOString();
+            return new fakeComment(
+                result.id,
+                result.post_id,
+                result.username,
+                result.parent_id,
+                result.author_id,
+                result.description,
+                result.votes,
+                createdAtString,
+                is_teacher
+            );
+        }));
+    
         const nestedJSONArray = receivedCommentsForAPost
-        .filter(comment => comment.parent_id === -1)
-        .map(comment => this.buildNestedJSON(receivedCommentsForAPost, comment));
-
+            .filter(comment => comment.parent_id === -1)
+            .map(comment => this.buildNestedJSON(receivedCommentsForAPost, comment));
+    
         return nestedJSONArray;
     }
 
@@ -121,7 +139,7 @@ static async post(
         parsedVotes = parseInt(votes);
     }
 
-    if(uid !== author_id){
+    if(user_id !== author_id){
         throw new Error("User_id and author_id not equal");
     }
 
