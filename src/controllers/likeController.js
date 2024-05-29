@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 class LikeController {
     static async getFromPost(req, res) { //toate like-urile unei postari
-        console.log("aici");
         const post_id = parseInt(req.query.post_id);
         try {
             const likes = await likeServices.getFromPost(post_id);

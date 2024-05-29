@@ -27,7 +27,6 @@ class CommentController {
               });
       
               const user = users.length > 0 ? users[0] : null;
-              console.log(user);
               if (!user) {
                 return res.status(404).json({ "status": "err", "message": "User not found" });
               }
