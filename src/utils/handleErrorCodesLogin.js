@@ -11,13 +11,13 @@ async function handleErrorCodes(res, code) {
 		case HttpCodes.USER_DOESNOT_EXIST:
 			res.send({
 				resCode: code,
-				message: "The email does not exists in the database",
+				message: "The email does not exists in the database - !!!!!!! wow",
 			});
 			return true;
 		case HttpCodes.UNVERIFIED_EMAIL:
 			res.send({
 				resCode: code,
-				message: "The email has not been verified yet",
+				message: "The email has not been verified yet - !!!!!!! wow",
 			});
 			return true;
 		case HttpCodes.BAD_REQUEST: // The error code needs to be changed?
