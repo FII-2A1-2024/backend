@@ -37,7 +37,7 @@ class PostController {
                 return res.status(500).json({ "status": "err", "message": err.message });
             }
     
-            const {author_id, username, title, description, votes, category } = req.body;
+            const {author_id, username, title, description, category } = req.body;
             const file = req.file;
 
             try {
@@ -54,12 +54,11 @@ class PostController {
                   });
           
                   const user = users.length > 0 ? users[0] : null;
-                  console.log(user);
                   if (!user) {
                     return res.status(404).json({ "status": "err", "message": "User not found" });
                   }
                 
-                const post = await postServices.post(author_id, user.uid, username, title, description, votes, category, url);
+                const post = await postServices.post(author_id, user.uid, username, title, description, category, url);
                 res.status(200).json({ "status": "ok", post });
             } catch (error) {
                 res.status(500).json({ "status": "err", "message": error.message });
@@ -72,7 +71,7 @@ class PostController {
                 return res.status(500).json({ "status": "err", "message": err.message });
             }
 
-            const { id, title, description, votes, category } = req.body;
+            const { user_id, id, title, description, votes, category } = req.body;
             const file = req.file;
 
             try {
@@ -81,7 +80,7 @@ class PostController {
                 } else if (description !== undefined && title == undefined && votes == undefined && category == undefined && file == undefined) {
                     await postServices.putDescription(id, description);
                 } else if (votes !== undefined && title == undefined && description == undefined && category == undefined && file == undefined) {
-                    await postServices.putVotes(id, votes);
+                    await postServices.putVotes(user_id, id, votes);
                 } else if (votes == undefined && title == undefined && description == undefined && category !== undefined && file == undefined) {
                     await postServices.putCategory(id, category);
                 } else if (votes == undefined && title == undefined && description == undefined && category == undefined && file != undefined) {

@@ -133,9 +133,8 @@ class PostService {
 		username,
 		title,
 		description,
-		votes,
 		category,
-		url,
+		url
 	) {
 		const createdAt = new Date();
 
@@ -154,7 +153,7 @@ class PostService {
 		if (url != null && (url.length > 255 || url.length == 0))
 			throw new Error("URL entry too long/empty");
 
-		if (uid !== author_id) {
+		if (parseInt(uid) !== parseInt(author_id)) {
 			throw new Error("User_id and author_id not equal");
 		}
 
@@ -174,15 +173,6 @@ class PostService {
 			);
 		}
 
-		let parsedVotes;
-		if (votes === undefined) {
-			parsedVotes = 0;
-		} else if (isNaN(parseInt(votes))) {
-			throw new Error("Invalid votes");
-		} else {
-			parsedVotes = parseInt(votes);
-		}
-
 		let results = null;
 		try {
 			results = await prisma.posts.create({
@@ -191,11 +181,11 @@ class PostService {
 					username: username,
 					title: title,
 					description: description,
-					votes: parsedVotes,
+					votes: 0,
 					created_at: createdAt,
 					category: category,
 					comments_count: 0,
-					url: url,
+					url: url
 				},
 			});
 		} catch (error) {
@@ -211,11 +201,11 @@ class PostService {
 			title: title,
 			username: username,
 			description: description,
-			votes: parsedVotes,
+			votes: 0,
 			created_at: createdAt,
 			category: category,
 			comments_count: 0,
-			url: url,
+			url: url
 		};
 
 		return post;
@@ -358,46 +348,164 @@ class PostService {
 		} else throw new Error("Post with the given id doesn't exist");
 	}
 
-	static async putVotes(id, votes) {
-		let result = null;
-		try {
-			result = await prisma.posts.findUnique({
-				where: {
-					id: parseInt(id),
-				},
-			});
-		} catch (error) {
-			throw error;
-		} finally {
-			await prisma.$disconnect();
-		}
+	static async putVotes(
+        user_id,
+        id,
+        votes
+    ) {
+        let result = null;
+        try {
+            result = await prisma.posts.findUnique({
+                where: {
+                    id: parseInt(id)
+                }
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
 
-		if (result != null) {
-			if (!id || isNaN(parseInt(id)) || parseInt(id) <= 0)
-				throw new Error("Invalid id");
-			if (isNaN(parseInt(votes))) {
-				throw new Error("Invalid votes");
-			}
+        if (result != null){
+            if(!id || isNaN(parseInt(id)) || parseInt(id) <= 0)  
+                throw new Error("Invalid id");
+            if (isNaN(parseInt(votes))) {
+                throw new Error("Invalid votes");
+            }
 
-			let results = null;
-			try {
-				results = await prisma.posts.update({
-					where: {
-						id: parseInt(id),
-					},
-					data: {
-						votes: parseInt(votes),
-					},
-				});
-			} catch (error) {
-				throw error;
-			} finally {
-				await prisma.$disconnect();
-			}
+            //verificam daca exista in postsVotes
+            let resultVote = null;
+            try {
+                resultVote = await prisma.postsVotes.findMany({
+                    where: {
+                        user_id: parseInt(user_id),
+                        post_id: parseInt(result.id)
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
 
-			if (results == null) throw new Error("Post couldn't be updated");
-		} else throw new Error("Post with the given id doesn't exist");
-	}
+            let difference = votes - result.votes;
+            if(difference == 2 && resultVote[0] != null) { //inseamna ca user-ul a sters dislike-ul si a dat like si nu mai facuse deja asta
+                if(resultVote[0].vote ==-1){
+
+                    //trebuie update pe campul de vote in valoarea opusa
+                    let results = null;
+                    try {
+                        results = await prisma.postsVotes.updateMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id)
+                            },
+                            data: {
+                                vote: 1
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else throw new Error("Invalid vote entry - a like was already made");
+                
+            }  
+            else if(difference == -2 && resultVote[0] != null){ //inseamna ca user-ul a sters like-ul si a dat dislike si nu mai facuse deja asta
+                //trebuie update pe campul de vote in valoarea opusa
+                if(resultVote[0].vote ==1){
+                    let results = null;
+                    try {
+                        results = await prisma.postsVotes.updateMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id)
+                            },
+                            data: {
+                                vote: -1
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else throw new Error("Invalid vote entry - a dislike was already made");
+                      
+            }  
+            else if(difference == 1 || difference == -1) { //inseamna ca user-ul a dat dis/like sau si-a sters dis/like-ul
+
+                if(resultVote[0] == null) { //daca nu exista deja in tabel, a dat dis/like, trebuie facut insert 
+
+                    let results = null;
+                    try {
+                        results = await prisma.postsVotes.create({
+                            data: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id),
+                                vote: difference
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else if( (difference == 1 && resultVote[0].vote == 1) || (difference == -1 && resultVote[0].vote == -1) ){ //vrea sa dea iar dis/like dar a dat deja
+                    throw new Error("A like/dislike was already made by this user");
+                } 
+                else { 
+                    //exista in tabel -> doar si a sters like-ul 
+                    //facem delete din postsVotes
+                    let deleteRow = null;
+                    try {
+                        deleteRow = await prisma.postsVotes.deleteMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                post_id: parseInt(result.id),
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                }
+
+            }
+            else throw new Error("Invalid vote entry - cannot deduce user behaviour");
+
+            let results = null;
+            try {
+                results = await prisma.posts.update({
+                    where: {
+                        id: parseInt(id)
+                    },
+                    data: {
+                        votes: parseInt(votes)
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            if (results == null) 
+                throw new Error("Post couldn't be updated");
+        }
+        else throw new Error("Post with the given id doesn't exist");
+    }
 
 	static async putUrl(id, url) {
 		let result = null;

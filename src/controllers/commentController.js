@@ -18,7 +18,7 @@ class CommentController {
         const token = authHeader.split(' ')[1];
         const decodedToken = jwt.decode(token);
 
-        const { post_id, username, parent_id, author_id, description, votes } = req.body;
+        const { post_id, username, parent_id, author_id, description} = req.body;
         try {
             const users = await prisma.user.findMany({
                 where: {
@@ -27,7 +27,6 @@ class CommentController {
               });
       
               const user = users.length > 0 ? users[0] : null;
-              console.log(user);
               if (!user) {
                 return res.status(404).json({ "status": "err", "message": "User not found" });
               }
@@ -38,8 +37,7 @@ class CommentController {
                 parent_id,
                 author_id,
                 user.uid,
-                description,
-                votes
+                description
             );
             res.status(200).json({"status":"ok", comment_id});
         } catch (error) {
@@ -56,12 +54,12 @@ class CommentController {
         }
     }
     static async put(req, res) {
-        const { id, description, votes } = req.body;
+        const { user_id, id, description, votes } = req.body;
         try {
             if (description !== undefined && votes == undefined) {
                 await commentServices.putDescription(id, description);
             } else if (votes !== undefined && description == undefined) {
-                await commentServices.putVotes(id, votes);
+                await commentServices.putVotes(user_id, id, votes);
             } else {
                 throw new Error("Too many or few parameters");
             }

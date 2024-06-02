@@ -2,6 +2,7 @@ const comment = require("./../models/commentModel");
 const fakeComment = require("./../models/fakeCommentModel");
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const checkProfanity = require("./../utils/ProfanityDetector/profanityValidator");
 
 class commentServices {
     static async getAll(post_id) {
@@ -83,8 +84,7 @@ static async post(
     parent_id,
     author_id,
     user_id,
-    description,
-    votes
+    description
 ) {
     const createdAt = new Date();
 
@@ -130,16 +130,15 @@ static async post(
         throw new Error("Description entry too long/empty");
     if(!username || username.length > 50 || username.length == 0)
         throw new Error("Username too long/empty");
-    let parsedVotes;
-    if (votes === undefined) {
-        parsedVotes = 0;
-    } else if (isNaN(parseInt(votes))) {
-        throw new Error("Invalid votes");
-    } else {
-        parsedVotes = parseInt(votes);
+
+    let profanityResult = await checkProfanity(description);
+    profanityResult = JSON.parse(profanityResult);
+
+    if(profanityResult.status){
+        throw new Error("Description contains profane words: " + profanityResult.words);
     }
 
-    if(user_id !== author_id){
+    if(parseInt(user_id) !== parseInt(author_id)){
         throw new Error("User_id and author_id not equal");
     }
 
@@ -152,7 +151,7 @@ static async post(
                 parent_id: parent_id,
                 author_id: author_id,
                 description: description,
-                votes: parsedVotes,
+                votes: 0,
                 created_at: createdAt
             }
         });
@@ -192,6 +191,13 @@ static async post(
         if(!id) throw new Error("Invalid id entry");
         if(!description || description.length > 65535 || description.length == 0)
             throw new Error("Description entry too long/empty");
+
+        let profanityResult = await checkProfanity(description);
+        profanityResult = JSON.parse(profanityResult);
+
+        if(profanityResult.status){
+            throw new Error("Description contains profane words: " + profanityResult.words);
+        }
 
         let result = null;
         try {
@@ -234,6 +240,7 @@ static async post(
 
 
     static async putVotes(
+        user_id,
         id,
         votes
     ) {
@@ -256,14 +263,127 @@ static async post(
         }
 
         if(result != null){
+
+            let resultVote = null;
+            try {
+                resultVote = await prisma.commentsVotes.findMany({
+                    where: {
+                        user_id: parseInt(user_id),
+                        comment_id: parseInt(result.id)
+                    }
+                });
+            } catch (error) {
+                throw error;
+            } finally {
+                await prisma.$disconnect();
+            }
+
+            let difference = votes - result.votes;
+            if(difference == 2 && resultVote[0] != null) { //inseamna ca user-ul a sters dislike-ul si a dat like si nu mai facuse deja asta
+                if(resultVote[0].vote ==-1){
+
+                    //trebuie update pe campul de vote in valoarea opusa
+                    let results = null;
+                    try {
+                        results = await prisma.commentsVotes.updateMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                comment_id: parseInt(result.id)
+                            },
+                            data: {
+                                vote: 1
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else throw new Error("Invalid vote entry - a like was already made");
+                
+            }  
+            else if(difference == -2 && resultVote[0] != null){ //inseamna ca user-ul a sters like-ul si a dat dislike si nu mai facuse deja asta
+                //trebuie update pe campul de vote in valoarea opusa
+                if(resultVote[0].vote ==1){
+                    let results = null;
+                    try {
+                        results = await prisma.commentsVotes.updateMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                comment_id: parseInt(result.id)
+                            },
+                            data: {
+                                vote: -1
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else throw new Error("Invalid vote entry - a dislike was already made");
+                      
+            }  
+            else if(difference == 1 || difference == -1) { //inseamna ca user-ul a dat dis/like sau si-a sters dis/like-ul
+
+                if(resultVote[0] == null) { //daca nu exista deja in tabel, a dat dis/like, trebuie facut insert 
+
+                    let results = null;
+                    try {
+                        results = await prisma.commentsVotes.create({
+                            data: {
+                                user_id: parseInt(user_id),
+                                comment_id: parseInt(result.id),
+                                vote: difference
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                    if (results == null) 
+                        throw new Error("PostsVotes couldn't be updated");
+                }
+                else if( (difference == 1 && resultVote[0].vote == 1) || (difference == -1 && resultVote[0].vote == -1) ){ //vrea sa dea iar dis/like dar a dat deja
+                    throw new Error("A like/dislike was already made by this user");
+                } 
+                else { 
+
+                    //exista in tabel -> doar si a sters like-ul 
+                    //facem delete din postsVotes
+                    let deleteRow = null;
+                    try {
+                        deleteRow = await prisma.commentsVotes.deleteMany({
+                            where: {
+                                user_id: parseInt(user_id),
+                                comment_id: parseInt(result.id),
+                            }
+                        });
+                    } catch (error) {
+                        throw error;
+                    } finally {
+                        await prisma.$disconnect();
+                    }
+                }
+
+            }
+            else throw new Error("Invalid vote entry - cannot deduce user behaviour");
+
             let results = null;
             try {
                 results = await prisma.comments.update({
                     where: {
-                        id: id
+                        id: parseInt(id)
                     },
                     data: {
-                        votes: votes
+                        votes: parseInt(votes)
                     }
                 });
             } catch (error) {
