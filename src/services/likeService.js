@@ -1,4 +1,7 @@
 const FakeUser = require("./../models/fakeUserModel");
+const FakePostWithUserVote = require("./../models/fakePostModelWithUserVote");
+const FakeCommentWithUserVote = require("./../models/fakeCommentWithUserVote");
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -74,6 +77,76 @@ class likeService {
 
     static async getLikedPosts(user_id) {
 
+        if (!user_id) throw new Error("Invalid user_id entry");
+
+        //verificam daca id-ul userului este unul valid
+        let result = null;
+        try {
+            result = await prisma.user.findUnique({
+                where: {
+                    uid: parseInt(user_id),
+                },
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if (result != null) {
+            let posts = null;
+            try {
+                posts = await prisma.postsVotes.findMany({
+                    where: {
+                        user_id: parseInt(user_id),
+                    },
+                });
+            } catch (error) {
+                await prisma.$disconnect();
+            } finally {
+                await prisma.$disconnect();
+            }
+            
+            if (posts == null || posts.length === 0) {
+                throw new Error("User with the given id doesn't have any liked posts");
+            }
+        
+            const receivedLikedPosts = await Promise.all(posts.map(async (result) => {
+                let post = null;
+                try {
+                    post = await prisma.posts.findUnique({
+                        where: {
+                            id: parseInt(result.post_id),
+                        },
+                    });
+                } catch (error) {
+                    throw error;
+                } finally {
+                    await prisma.$disconnect();
+                }
+        
+                return new FakePostWithUserVote(
+                    post.id,
+                    post.author_id,
+                    post.username,
+                    post.title,
+                    post.description,
+                    post.votes,
+                    post.created_at,
+                    post.category,
+                    post.comments_count,
+                    post.url,
+                    post.is_teacher,
+                    result.vote
+                );
+            }));
+
+            return receivedLikedPosts;
+
+        } else {
+            throw new Error("No user found with the given id");
+        }
+
     }
 
     static async getFromComment(comment_id) {
@@ -147,10 +220,74 @@ class likeService {
 
     static async getLikedComments(user_id) {
 
+        if (!user_id) throw new Error("Invalid user_id entry");
+
+        //verificam daca id-ul userului este unul valid
+        let result = null;
+        try {
+            result = await prisma.user.findUnique({
+                where: {
+                    uid: parseInt(user_id),
+                },
+            });
+        } catch (error) {
+            throw error;
+        } finally {
+            await prisma.$disconnect();
+        }
+
+        if (result != null) {
+            let comments = null;
+            try {
+                comments = await prisma.commentsVotes.findMany({
+                    where: {
+                        user_id: parseInt(user_id),
+                    },
+                });
+            } catch (error) {
+                await prisma.$disconnect();
+            } finally {
+                await prisma.$disconnect();
+            }
+            
+            if (comments == null || comments.length === 0) {
+                throw new Error("User with the given id doesn't have any liked comments");
+            }
+        
+            const receivedLikedComments = await Promise.all(comments.map(async (result) => {
+                let comment = null;
+                try {
+                    comment = await prisma.comments.findUnique({
+                        where: {
+                            id: parseInt(result.comment_id),
+                        },
+                    });
+                } catch (error) {
+                    throw error;
+                } finally {
+                    await prisma.$disconnect();
+                }
+        
+                return new FakeCommentWithUserVote(
+                    comment.id,
+                    comment.post_id,
+                    comment.username,
+                    comment.parent_id,
+                    comment.author_id,
+                    comment.description,
+                    comment.votes,
+                    comment.created_at,
+                    result.vote
+                );
+            }));
+
+            return receivedLikedComments;
+
+        } else {
+            throw new Error("No user found with the given id");
+        }
+
     }
 }
-
-
-
     
 module.exports = likeService;
