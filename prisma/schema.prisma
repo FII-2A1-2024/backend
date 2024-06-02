@@ -77,3 +77,12 @@ model PostReports {
   id_post_owner  Int?
   stateOfReport      String  @default("verification in pending")
 }
+
+model CommentReports {
+  report_id          Int     @id @default(autoincrement())
+  comment_id            Int
+  reason             String
+  id_reporter Int?
+  id_comment_owner  Int?
+  stateOfReport      String  @default("verification in pending")
+}
