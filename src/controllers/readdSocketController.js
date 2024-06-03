@@ -40,13 +40,11 @@ async function addLoggedUser(req, res) {
         };
         const userExistsInLoggedTable = await prisma.loggedUsers.findMany({
             where: {
-                uid: req.body.uid,
-                username: req.body.username,
                 socket: req.body.socket,
             }
         });
         if (!(userExistsInLoggedTable.length === 0)) {
-            return res.json({ message: "user already exists in loggedUsers" });
+            return res.json({ message: "socket already in use" });
         }
         const result = await userServices.logUserIn(user);
         return res.json(result);
