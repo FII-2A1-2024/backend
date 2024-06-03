@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 async function deleteLoggedUser(req, res) {
     try {
-        const socket_id = req.body.socket
+        const socket_id = req.query.socket
         const socketExists = await prisma.loggedUsers.findMany({
             where: {
                 socket: socket_id
