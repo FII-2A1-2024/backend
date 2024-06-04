@@ -16,19 +16,22 @@ async function createUser(username, password, originating_domain){
     let code = 0
     let message = "All done! Proceed verifying your email in order to be able to log in!"
     return UserService.existsInDB(username).then(result => {
-        if(result == 1){
+        if(result.resCode == 200){
             console.log("Exista deja in BD");
             code = HttpCodes.USER_ALREADY_EXISTS
             message = "An account with this username already exists!"
         }
-        else{
+        else if(result.resCode == 452){
             code = HttpCodes.SUCCESS
             //verify email RIGHT HERE
             const verificationToken = jwtHandler.generateVerificationToken(username)
             const verificationLink = `${originating_domain}/signup/verify?token=${verificationToken}`;
             console.log(verificationLink)
-            sendEmail(username, verificationLink, process.env.TEMPLATE_ID)
+            EmailSender.sendEmail(username, verificationLink, process.env.TEMPLATE_ID)
             return UserService.addUser(newUser)
+        } else{
+            code = HttpCodes.INTERNAL_SERVER_ERROR
+            message = "Error ocurred"
         }
         return Promise.resolve(code)
     }).then(() => {
