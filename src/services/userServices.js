@@ -45,16 +45,9 @@ class UserService {
 	async getIdByEmail(email) {
 		return UserService.getIdByEmailLogic(email);
 	}
-
-    async isTeacher(email){
-        return UserService.verifyTeacher(email)
-    }
-
-    async makeTeacher(email){
-        return UserService.makeProf(email)
-    }
-
-
+	async deleteUserFromLoggedTable(socket_id){
+		return UserService.deleteUserFromLoggedInTable(socket_id);
+	}
 	async logUserIn(user) {
 		return UserService.addUserInLoggedUsers(user);
 	}
@@ -240,6 +233,35 @@ class UserService {
 			return {
 				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
 				message: "Error adding user",
+			};
+		}
+	}
+
+	static async deleteUserFromLoggedInTable(socket_id){
+		try {
+			/*const instance = await prisma.loggedUsers.delete({
+				where: {
+					socket: socket_id,
+				},
+			});
+			console.log(`Delete logged user with socket_id ${socket_id}`);*/
+			//console.log("here" + socket_id);
+        const result = await prisma.loggedUsers.deleteMany({
+            where: {
+                socket: socket_id,
+            },
+        });
+        console.log(`Deleted ${result.count} users with socket_id ${socket_id}`);
+       
+			return {
+				resCode: HttpCodes.SUCCESS,
+				message: "Deleted socket successfully",
+			};
+		} catch (error) {
+			console.error(`Error deleting socket from LoggedUsers -> ${error}`);
+			return {
+				resCode: HttpCodes.INTERNAL_SERVER_ERROR,
+				message: "Error deleting socket from LoggedUsers",
 			};
 		}
 	}

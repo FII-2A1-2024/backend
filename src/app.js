@@ -19,6 +19,7 @@ const searchRoute = require("./routes/searchRoute");
 const reportRoute = require("./routes/reportRoute");
 const socketRoutes = require("./routes/socketRoutes");
 
+
 app.use(cors({ origin: "*" }));
 
 app

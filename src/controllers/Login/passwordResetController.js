@@ -59,7 +59,7 @@ async function requestChange(req, res) {
 	}
 
 	const resetToken = resetTokenServices.generateResetToken(email);
-	const resetLink = `http://${process.env.SERVER_IP}:${process.env.SERVER_PORT}/resetPass/verify?token=${resetToken}`;
+	const resetLink = `http://dev.octavianregatun.com/reset?token=${resetToken}`;
 	console.log(resetLink);
 	sendEmail(email, "Password Reset", resetLink);
 	res.send({
