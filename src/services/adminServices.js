@@ -53,19 +53,25 @@ class AdminService {
 
     static async deletePostByID(post_id, reason) {
         try {
+            const postIdInt = parseInt(post_id, 10);
+            //console.log(postIdInt)
+            if (isNaN(postIdInt)) {
+                throw new Error('Invalid post_id format. It should be an integer.');
+            }
+
             //trimit si email
             const post = await prisma.posts.findUnique({
-                where: { id: post_id }
+                where: { id: postIdInt }
             });
-            if(!post) return "post wasnt found";
+            if (!post) return "post wasnt found";
             const existingUser = await prisma.user.findUnique({
                 where: { uid: post.author_id }
             });
-            const existingUser_email=existingUser.emailPrimary;
+            const existingUser_email = existingUser.emailPrimary;
 
-            sendEmail(existingUser_email,"Your post was deleted", `Your post was deleted because ${reason}`);
-                
-            await PostServices.delete(post_id);
+            sendEmail(existingUser_email, "Your post was deleted", `Your post was deleted because ${reason}`);
+
+            await PostServices.delete(postIdInt);
             const message = `Post with ID ${post_id} has been successfully deleted for reason: ${reason}`;
             return message;
         } catch (error) {
@@ -129,12 +135,10 @@ class AdminService {
 
     static async viewAllReports() {
         try {
-            const allReports = await prisma.postReports.findMany();
-            /*afisam fiecare report din db 
-            allReports.forEach(report => {
-                console.log(`ID: ${report.report_id}, Reporter Email: ${report.reporter_email}, Reported Email: ${report.reported_email}, Reason: ${report.reason}, State: ${report.state}`);
-            });
-            */
+            const postReports = await prisma.postReports.findMany();
+            const commentReports=await prisma.commentReports.findMany();
+            const allReports = [...postReports, ...commentReports];
+            //console.log(allReports);
             return allReports;
         } catch (error) {
             console.error('Eroare la preluarea datelor:', error);

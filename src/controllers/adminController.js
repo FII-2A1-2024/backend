@@ -113,11 +113,11 @@ class AdminController {
         try {
 
 
-            if (!req.body.post_id || !req.body.reason) {
-                return res.status(400).send("post_id and reason are missing from the body of the req");
+            if (!req.query.post_id || !req.query.reason) {
+                return res.status(400).send("post_id and reason are missing");
             }
 
-            const confirmationForDeletePost = await adminServices.deletePost(req.body.post_id, req.body.reason);
+            const confirmationForDeletePost = await adminServices.deletePost(req.query.post_id, req.query.reason);
             res.status(200).json(confirmationForDeletePost);
 
         } catch (error) {
