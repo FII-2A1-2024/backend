@@ -43,7 +43,9 @@ async function verifyEmail(req, res){
         console.log("Totul e ok si userul a fost verificat");
 
         //? Cand e totul ok
-        res.send("Your account has been succesfully verified")
+        // res.send("Your account has been succesfully verified")
+		res.redirect("https://octavianregatun.com/verify")
+		
     } catch(error){
         console.error("Error verifying token: ", error);
         res.status(HttpCodes.INVALID_REQUEST).send("<p>Invalid token</p><a href='#'>Resend</a>")

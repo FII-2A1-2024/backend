@@ -7,6 +7,7 @@ async function signUp(req, res){
     try{
         const password = req.body.password;
         let username = req.body.email;
+        let originating_domain = req.get('host');
 
         //Vom normaliza emailul in cazul in care pune si litere mari
         username = normalizeEmail(username)
@@ -18,7 +19,7 @@ async function signUp(req, res){
             console.log("Nu introducem userul in baza de date, are email gresit");
             message = "Invalid email format! Example of accepted syntax: example.example@student.uaic.ro"
         } else{
-            result = (await signUpService.createUser(username, password)) 
+            result = (await signUpService.createUser(username, password, originating_domain)) 
             code = result.code
             message = result.message
         }
