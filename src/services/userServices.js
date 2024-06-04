@@ -71,7 +71,6 @@ class UserService {
 		return UserService.deleteLoggedOutUserById(id);
 	}
 
-<<<<<<< HEAD
     async isTeacher(email){
         return UserService.verifyTeacher(email)
     }
@@ -81,18 +80,6 @@ class UserService {
     }
 
 
-
-    static async insert(newUser){
-        try{
-            const hashedPassword = generateHash(newUser.password);
-            const instance = await prisma.user.create({
-                data: {
-                    emailPrimary: newUser.username,
-                    password: hashedPassword,
-                    emailSecondary : "null",
-                    profesorFlag : 0,
-                    verifiedEmail : 0
-=======
 	async isAdmin(email) {
 		try {
 			const admin = await prisma.admin.findUnique({
@@ -492,7 +479,6 @@ class UserService {
                 where: {
                     emailPrimary: email,
                     profesorFlag: 1
->>>>>>> ac26ee59438eb4cb54212bebb3d07c4e333efcc3
                 }
             });
             return user ? true : false;
@@ -518,7 +504,6 @@ class UserService {
             return false;
         }   
     }
-<<<<<<< HEAD
 
     static async verifyTeacher(email){
         try {
@@ -551,7 +536,6 @@ class UserService {
             return false;
         }   
     }
-=======
 		
 	static async deleteLoggedOutUserById(id) {
 		try {
@@ -571,7 +555,6 @@ class UserService {
 			};
 		}
 	}
->>>>>>> ac26ee59438eb4cb54212bebb3d07c4e333efcc3
 }
 
 module.exports = new UserService();
