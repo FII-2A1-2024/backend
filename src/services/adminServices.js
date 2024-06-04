@@ -1,16 +1,9 @@
 
-<<<<<<< HEAD
-const {PrismaClient} = require('@prisma/client');
-const prisma = new PrismaClient()
-const HttpCodes = require('../config/returnCodes')
-
-=======
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient()
 const HttpCodes = require('../config/returnCodes')
 
 const sendEmail = require("../utils/sendEmail").sendCustomEmail;
->>>>>>> ac26ee59438eb4cb54212bebb3d07c4e333efcc3
 const path = require("path");
 const dotenv = require("dotenv");
 const envPath = path.resolve(__dirname, "../config", ".env.local");
@@ -18,19 +11,15 @@ dotenv.config({ path: envPath });
 
 const UserService = require('../services/userServices');
 const TeacherService = require('../services/teacherServices')
-<<<<<<< HEAD
-=======
 
 
 const PostServices = require('../services/postServices');
 
->>>>>>> ac26ee59438eb4cb54212bebb3d07c4e333efcc3
 
 class AdminService {
 
     //o sa lasam implementarile mai jos, ca sa fie mai usor de urmarit
 
-<<<<<<< HEAD
     static async timeoutUser(email) {
         return 0;
     }
@@ -51,17 +40,6 @@ class AdminService {
     }
     static async viewReports() {
         return AdminService.viewAllReports();
-=======
-
-    static async reviewReport(report_id, wantedState) {
-        return AdminService.reviewReportByID(report_id, wantedState);
-    }
-    static async promoteUser(me, email, level) {
-        return AdminService.promoteUserToAdmin(me, email, level);
-    }
-    static async promoteTeacher(myself, email, firstSubject) {
-        return AdminService.promoteUserToTeacher(myself, email, firstSubject);
->>>>>>> ac26ee59438eb4cb54212bebb3d07c4e333efcc3
     }
     static async addSubjectToTeacher(myself, email, secondSubject) {
         return AdminService.addSubject(myself, email, secondSubject)
