@@ -11,16 +11,34 @@ class CommentController {
         }
     }
     static async post(req, res) {
-        const { post_id, parent_id, author_id, description, votes } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader.split(' ')[1];
+        const decodedToken = jwt.decode(token);
+
+        const { post_id, username, parent_id, author_id, description, votes } = req.body;
         try {
-            await commentServices.post(
+            const users = await prisma.user.findMany({
+                where: {
+                  emailPrimary: decodedToken.user,
+                },
+              });
+      
+              const user = users.length > 0 ? users[0] : null;
+              console.log(user);
+              if (!user) {
+                return res.status(404).json({ "status": "err", "message": "User not found" });
+              }
+
+            const comment_id = await commentServices.post(
                 post_id,
+                username,
                 parent_id,
                 author_id,
+                user.uid,
                 description,
                 votes
             );
-            res.status(200).json({"status":"ok", "message":"Comment added to db"});
+            res.status(200).json({"status":"ok", comment_id});
         } catch (error) {
             res.status(500).json({"status":"err", "message": error.message});
         }
@@ -44,7 +62,7 @@ class CommentController {
             } else {
                 throw new Error("Too many or few parameters");
             }
-            res.status(200).json({ "status":"ok", "message":"Comment updated in db"});
+            res.status(200).json({ "status":"ok", id});
         } catch (error) {
             res.status(500).json({ "status":"err", "message": error.message });
         }

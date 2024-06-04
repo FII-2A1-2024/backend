@@ -3,7 +3,7 @@ const crypto = require('crypto');
 function generateSecret(length) {
     return crypto.randomBytes(Math.ceil(length / 2))
         .toString('hex')
-        .slice(0, length); 
+        .slice(0, length);
 }
 
 const jwtSecret = generateSecret(32);
@@ -11,4 +11,3 @@ const jwtSecret = generateSecret(32);
 module.exports = {
     jwtSecret: jwtSecret
 };
-

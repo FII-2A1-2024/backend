@@ -1,12 +1,11 @@
 const jwt = require("jsonwebtoken");
 const privateKeyHandler = require("../../utils/JWT/JWTSecretGeneration");
+
 const HttpCodes = require("../../config/returnCodes");
-const passwordHashHandler = require('../../utils/generateHash')
+const passwordHashHandler = require("../../utils/generateHash");
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-
-
 
 async function changePassword(req, res) {
 	const token = req.query.token;
