@@ -28,6 +28,9 @@ class AdminService {
     static async reviewReport(report_id,wantedState) {
         return AdminService.reviewReportByID(report_id,wantedState);
     }
+    static async reviewCommentReport(report_id,wantedState) {
+        return AdminService.reviewCommentReportByID(report_id,wantedState);
+    }
     static async promoteUser(me, email, level) {
         return AdminService.promoteUserToAdmin(me, email, level);
     }
@@ -123,7 +126,36 @@ class AdminService {
                     data: { stateOfReport: wantedState }
                 });
                 //console.log(updatedReport);
-                message = `State of report with ID ${report_id} is now ${wantedState}.`;
+                message = `State of post report with ID ${report_id} is now ${wantedState}.`;
+            }
+            return message;
+        } catch (error) {
+            console.error('Eroare la preluarea datelor:', error);
+            throw error;
+        }
+    }
+    static async reviewCommentReportByID(report_id, wantedState) {
+        try {
+            let message = "";
+            //cauta in tabela linia cu report_id si inlocuieste state cu wanted state
+            //se presupune ca ajung emailuri corecte aici
+            const existingReport = await prisma.commentReports.findUnique({
+                where: { report_id: report_id }
+            });
+
+            if (!existingReport) {
+                message = `Report with ID ${report_id} doesn't exist.`;
+            }
+            else if (existingReport.stateOfReport !== "verification in pending") {
+                message = `Report with ID ${report_id} was already reviewed.`;
+            }
+            else {
+                const updatedReport = await prisma.commentReports.update({
+                    where: { report_id: report_id },
+                    data: { stateOfReport: wantedState }
+                });
+                //console.log(updatedReport);
+                message = `State of comment report with ID ${report_id} is now ${wantedState}.`;
             }
             return message;
         } catch (error) {

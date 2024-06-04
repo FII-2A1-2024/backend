@@ -15,8 +15,10 @@ router.post("/teachers/subjects/add", authenticateToken, isAdmin, adminControlle
 
 router.get("/reports", authenticateToken,isAdmin, adminController.viewReports);
 
-router.patch("/reports/evaluate", authenticateToken,isAdmin, adminController.evaluateReport);
-//primeste report_id si o evaluare a unui admin si modifica in db state-ul pt report 
+router.patch("/reports/posts", authenticateToken,isAdmin, adminController.evaluateReport); //reporturi postari
+
+router.patch("/reports/comments", authenticateToken,isAdmin, adminController.evaluateCommentReport);//reporturi comments 
+ 
 router.post("/warning", authenticateToken,isAdmin, adminController.sendWarning);
 router.delete("/posts/deleteByAdmin", authenticateToken,isAdmin, adminController.deletePost);
 
