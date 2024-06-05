@@ -87,6 +87,7 @@ model CommentReports {
   stateOfReport      String  @default("verification in pending")
 }
 
+
 model PostsVotes{
   user_id Int
   post_id Int
